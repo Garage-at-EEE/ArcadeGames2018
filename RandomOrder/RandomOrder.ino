@@ -58,6 +58,6 @@ void RandomOrder(void) {
     playOrderActual[i][1] = playOrderOrdered[randomIndex][1];
     /* retrieving the row from the template array to the randomized array */
 
-    playOrderOrdered[randomIndex][0] = 0; /* "crossing out" the chosen match */
+    playOrderOrdered[randomIndex][0] = 0; // "crossing out" the chosen match
   }
 }
