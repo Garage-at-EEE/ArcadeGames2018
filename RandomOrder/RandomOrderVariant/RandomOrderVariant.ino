@@ -4,8 +4,8 @@
    Con: when the random function is not in our favour, the runtime is a lot longer than the original version
 */
 
-#define PLAYER_COUNT        3
-#define REPEAT_PER_PLAYER   50
+#define PLAYER_COUNT        4
+#define REPEAT_PER_PLAYER   5
 #define ROUND_COUNT_VAR     (REPEAT_PER_PLAYER * PLAYER_COUNT / 2)    // just a round count, named differently from the previous version to prevent confusion
 
 /* C and C++ cannot return an entire array so I have to resort to using a pointer instead */
