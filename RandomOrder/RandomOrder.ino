@@ -3,12 +3,14 @@
 #define ROUND_COUNT   (REPEAT_COUNT * PLAYER_COUNT * (PLAYER_COUNT-1) / 2)
 
 /* C and C++ cannot return an entire array so I have to resort to defining this as a global instead */
-int playOrderActual[ROUND_COUNT][2];
+int playOrder[ROUND_COUNT][2];
 
 /*  to be placed in void setup(){...} */
 
 /* define the function RandomOrder */
-void RandomOrder(void) {
+/* call the function via
+ *          void RandomOrder(&playOrderActual); */
+void RandomOrder(int playOrderActual[ROUND_COUNT][2]) {
 
   /* creating template array */
 
@@ -18,13 +20,13 @@ void RandomOrder(void) {
 
   for (int k = 1; k < PLAYER_COUNT; k++) {                      // first player index = k
 
-    int j = 1;                                                  // second player's index relative to the first player 
+    int j = 1;                                                  // second player's index relative to the first player
 
     for (int i = rowAfterPlayeri; i < rowAfterPlayeri + (PLAYER_COUNT - k); i++) {
       /* start from the row after the row the previous player ended with
        * stop after (PLAYER_COUNT - k) rows i.e. P1 stops after 3 row, P2 stops after 2 rows, P3 stops after 1 row */
 
-      playOrderOrdered[i][0] = k;                               // assign k to first player's index in the template array 
+      playOrderOrdered[i][0] = k;                               // assign k to first player's index in the template array
       playOrderOrdered[i][1] = k + j;                           // assign k + j to second player's index in the template array
 
       j++;                                                      // increment j
@@ -60,4 +62,10 @@ void RandomOrder(void) {
 
     playOrderOrdered[randomIndex][0] = 0; // "crossing out" the chosen match
   }
+
+  /* print check
+  for (int i = 0; i < ROUND_COUNT; i++){
+    printf("Round %d \t %d \t vs \t %d \n", (i+1), playOrderActual[i][0], playOrderActual[i][1]);
+  }
+  */
 }
