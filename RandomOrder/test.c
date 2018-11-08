@@ -68,9 +68,11 @@ void RandomOrder(int playOrderActual[ROUND_COUNT][2]) {
     playOrderOrdered[randomIndex][0] = 0; // "crossing out" the chosen match
   }
 
+  /* print check
   for (int i = 0; i < ROUND_COUNT; i++){
     printf("Round %d \t %d \t vs \t %d \n", (i+1), playOrderActual[i][0], playOrderActual[i][1]);
   }
+  */
 }
 
 
