@@ -30,10 +30,11 @@ class NeopixelCtrl {
     void updateSpeed();
 
     void countDown(int playerCode1, int playerCode2, int duration, unsigned long starttime);
-    void countUp(int playerCode1, int playerCode2, int duration, unsigned long starttime);
+    void countUp(int duration, unsigned long starttime);
     void displaySpeed(int playerCode, int buttonSpeed);
 
-    void frenzy(unsigned long currenttime);
+    void frenzy(int duration, unsigned long starttime);
+    void updateFrenzy(unsigned long currenttime);
   private:
     int _pixelPin;
     int _totalLength;

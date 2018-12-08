@@ -39,6 +39,7 @@ unsigned long _countupStartTime;
 int _countupDuration;
 
 unsigned long _frenzyOldTime;
+unsigned long _frenzyStartTime;
 int _frenzyDuration;
 
 bool isCountingDown;
@@ -151,7 +152,7 @@ void NeopixelCtrl :: updateCountDown(unsigned long currenttime) {
 
 }
 
-void NeopixelCtrl :: countUp(int playerCode1, int playerCode2, int duration, unsigned long starttime) {
+void NeopixelCtrl :: countUp(int duration, unsigned long starttime) {
 
   if (isCountingDown || isFrenzy) {
     isCountingDown = false;
@@ -201,7 +202,7 @@ void NeopixelCtrl :: updatePixelsColors(unsigned long currenttime) {
     updateCountUp(currenttime);
   }
   else if (isFrenzy) {
-    frenzy(currenttime);
+    updateFrenzy(currenttime);
   }
 
   updateSpeed();  // always activated so that players can check if the button is working
@@ -209,18 +210,20 @@ void NeopixelCtrl :: updatePixelsColors(unsigned long currenttime) {
   _pixelsPtr->show();
 }
 
-void NeopixelCtrl :: frenzy(int duration, unsigned long currenttime) {
-
+void NeopixelCtrl :: frenzy(int duration, unsigned long starttime) {
   if (isCountingDown || isCountingUp) {
     isCountingDown = false;
     isCountingUp = false;
   }
+  isFrenzy = true;
 
   _frenzyDuration = duration * 1000;
+  _frenzyStartTime = starttime;
+}
 
-  if (currenttime - _frenzyOldTime > 50) && (currenttime - _frenzyOldTime < _frenzyDuration) {    // for stability
+void NeopixelCtrl :: updateFrenzy(unsigned long currenttime) {
 
-    isFrenzy = true;
+  if ((currenttime - _frenzyOldTime > 50) && (currenttime - _frenzyOldTime < _frenzyDuration)) {    // for stability
     
     for (int i = 0; i < _topSegmentLength; i++) {
       _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(random(0, 255), random(0, 255), random(0, 255)));

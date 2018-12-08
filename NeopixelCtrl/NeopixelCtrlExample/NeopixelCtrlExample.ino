@@ -16,21 +16,25 @@ void setup() {
   randomSeed(analogRead(A0));                                                 // for frenzy
 
   pixelsCtrl.setTopSegment(0, 40);                                            // set the top segment first pixel index to 0
-  pixelsCtrl.setPlayerSegments(4, 10, false, null);                           // set 4 player segments of length 10 each. The index runs continuously between players
+  pixelsCtrl.setPlayerSegments(4, 10, false, 0);                           // set 4 player segments of length 10 each. The index runs continuously between players
                                       // if the ENTIRE player segments need to be shifted to other index, indicate this as true
                                              // and set the first index of the player segments here
-  pixelCtrl.setPlayerSegmentsColour(1, 'R');
-  pixelCtrl.setPlayerSegmentsColour(2, 'G');
-  pixelCtrl.setPlayerSegmentsColour(3, 'B');
-  pixelCtrl.setPlayerSegmentsColour(4, 'Y');
+  pixelsCtrl.setPlayerSegmentsColour(1, 'R');
+  pixelsCtrl.setPlayerSegmentsColour(2, 'G');
+  pixelsCtrl.setPlayerSegmentsColour(3, 'B');
+  pixelsCtrl.setPlayerSegmentsColour(4, 'Y');
 }
 
 void loop() {
 
-  pixelCtrl.countDown(1, 2, 10, currenttime);
+  pixelsCtrl.countDown(1, 2, 10, currenttime);
   updatePixels();
 
-  pixelCtrl.frenzy(
+  pixelsCtrl.frenzy(10, currenttime);
+  updatePixels();
+
+  pixelsCtrl.countUp(10, currenttime);
+  updatePixels();
 }
 
 void updatePixels() {
