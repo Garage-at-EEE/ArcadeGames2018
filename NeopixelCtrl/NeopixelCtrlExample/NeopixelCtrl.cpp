@@ -12,6 +12,8 @@
 #define MAXPLAYERS 4
 #define MAXSPEED 100
 
+// fields
+
 int _pixelPin;
 int _totalLength;
 
@@ -48,6 +50,8 @@ bool isCountingUp;
 
 Adafruit_NeoPixel* _pixelsPtr;
 
+// methods
+
 NeopixelCtrl :: NeopixelCtrl (Adafruit_NeoPixel* pixelsPtr, int totalLength, int pixelPin) {
 
   _pixelsPtr = pixelsPtr;
@@ -56,7 +60,7 @@ NeopixelCtrl :: NeopixelCtrl (Adafruit_NeoPixel* pixelsPtr, int totalLength, int
 
   isCountingDown = false;
   isCountingUp = false;
-  isFrenzy = false;
+  isFrenzy = false;                 // initialize all actions to false
 }
 
 void NeopixelCtrl :: setTopSegment(int firstPixel, int segLength) {
@@ -70,14 +74,20 @@ void NeopixelCtrl :: setTopSegment(int firstPixel, int segLength) {
   else {
     _leftSegmentLength = segLength / 2;
     _rightSegmentLength = _leftSegmentLength;
-  }
+  }                                               // in case of asymmetrical display
+                                                  // or if one pixel goes off the code can still sort of run with just minor index adjustment
 
   _rightSegmentFirstIndex = _topSegmentFirstIndex + _leftSegmentLength;
+  
   _playerSegmentFirstIndex = _rightSegmentFirstIndex + _rightSegmentLength;
+                                                  // set the player segment index to right after the last top segment index
+                                                  // can be overwritten in the setPlayerSegments function
 }
 
 void NeopixelCtrl :: setPlayerSegments(int numPlayers, int segLength, bool gap, int startPixel) {
-
+                                                                      // whether the player segments are indexed right after the top segment or not
+                                                                                // If gap = false, put the index of the first neopixel in player segment here
+                                                                                // If gap = true, just put any integer, 0 works fine.
   if (gap) {
     _playerSegmentFirstIndex = startPixel;
   }
@@ -119,15 +129,15 @@ void NeopixelCtrl :: countDown(int playerCode1, int playerCode2, int duration, u
   if (isCountingUp || isFrenzy) {
     isCountingUp = false;
     isFrenzy = false;
-  }
+  }                                       // for safety
   isCountingDown = true;
 
   if (playerCode1 > playerCode2) {
     int temp = playerCode1;
     playerCode2 = playerCode1;
     playerCode1 = temp;
-  }
-
+  }                                       // for correct order of display
+                                
   _countdownPlayerLeft = playerCode1;
   _countdownPlayerRight = playerCode2;
 
@@ -167,6 +177,7 @@ void NeopixelCtrl :: countUp(int duration, unsigned long starttime) {
 void NeopixelCtrl :: updateCountUp(unsigned long currenttime) {
 
   int timeElapsed = (int)(currenttime - _countupStartTime);
+                    // to save memory
 
   int numPixel = map(timeElapsed, 0, _countupDuration, 0, _topSegmentLength);
 
@@ -186,8 +197,10 @@ void NeopixelCtrl :: displaySpeed(int playerCode, int buttonSpeed) {
 void NeopixelCtrl :: updateSpeed() {
   for (int i = 0; i < _numPlayers; i++) {
     int thisPlayerSpeed = _playerSpeed[i];
-    int numPixel = map(thisPlayerSpeed, 0, 100, 0, _playerSegmentEachLength);
-
+    int numPixel = map(thisPlayerSpeed, 0, MAXSPEED, 0, _playerSegmentEachLength);
+                                           // !!!!!!!!!!!!!! //
+                                           // TO BE ADJUSTED //
+                                           // !!!!!!!!!!!!!! //
     for (int j = 0; j < numPixel; j++) {
       _pixelsPtr->setPixelColor(_playerSegmentFirstIndex + i * _playerSegmentEachLength + j, _playerColours[i]);
     }
@@ -217,13 +230,15 @@ void NeopixelCtrl :: frenzy(int duration, unsigned long starttime) {
   }
   isFrenzy = true;
 
-  _frenzyDuration = duration * 1000;
+  _frenzyDuration = duration * 1000; // convert second to millisecond
   _frenzyStartTime = starttime;
 }
 
 void NeopixelCtrl :: updateFrenzy(unsigned long currenttime) {
 
   if ((currenttime - _frenzyOldTime > 50) && (currenttime - _frenzyOldTime < _frenzyDuration)) {    // for stability
+                                      // arbitrary gap in milliseconds
+                                      // can be adjusted
     
     for (int i = 0; i < _topSegmentLength; i++) {
       _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(random(0, 255), random(0, 255), random(0, 255)));
