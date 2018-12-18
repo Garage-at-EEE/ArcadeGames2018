@@ -35,6 +35,11 @@ class NeopixelCtrl {
 
     void frenzy(int duration, unsigned long starttime);
     void updateFrenzy(unsigned long currenttime);
+
+    bool isCountingDown;
+    bool isFrenzy;
+    bool isCountingUp;
+
   private:
     int _pixelPin;
     int _totalLength;
@@ -58,11 +63,16 @@ class NeopixelCtrl {
     int _countdownPlayerRight;
     unsigned long _countdownStartTime;
     int _countdownDuration;
-    bool isCountingDown;
 
     unsigned long _countupStartTime;
     int _countupDuration;
-    bool isCountingUp;
+
+    unsigned long _frenzyOldTime;
+    unsigned long _frenzyStartTime;
+    int _frenzyDuration;
+
+
+
 
     Adafruit_NeoPixel pixelsPtr;
 };
