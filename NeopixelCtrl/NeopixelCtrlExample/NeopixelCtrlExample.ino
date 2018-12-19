@@ -44,17 +44,25 @@ void loop() {
   while (pixelsCtrl.isCountingUp) {
     updatePixels();
   }
-
-  // de-comment when the player objects are ready
-  // displaySpeed(1, playerOne.getSpeed());
-  // displaySpeed(1, playerTwo.getSpeed());
-  // displaySpeed(1, playerThree.getSpeed());
-  // displaySpeed(1, playerFour.getSpeed());
-
-
 }
 
 void updatePixels() {
+
+  // display speed calls are placed here so that the speed strip can change independently of the top strip control
+
+  // change out random() to playerXXX.getSpeed() when ready
+  // the randoms are for testing purpose
+
+  displaySpeed(1, random(0,100));
+  displaySpeed(2, random(0,100));
+  displaySpeed(3, random(0,100));
+  displaySpeed(4, random(0,100));
+
+    // displaySpeed(1, playerOne.getSpeed());
+  // displaySpeed(2, playerTwo.getSpeed());
+  // displaySpeed(3, playerThree.getSpeed());
+  // displaySpeed(4, playerFour.getSpeed());
+  
   pixelsCtrl.updatePixelsColors(currenttime);
   pixels.show();
 }
