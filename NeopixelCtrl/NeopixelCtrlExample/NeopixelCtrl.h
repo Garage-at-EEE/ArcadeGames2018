@@ -19,32 +19,34 @@ class NeopixelCtrl {
     NeopixelCtrl(Adafruit_NeoPixel* pixelsPtr, int pixelPin, int totalLength);
 
     void setTopSegment(int firstPixel, int segLength);
-    void setPlayerSegments(int numPlayers, int segLength, bool gap, int startPixel);
+    void setPlayerSegment(int playerCode, int firstPixel, int lastPixel);
 
-    void setPlayerSegmentsColour(int playerCode, char colour);
+    void setPlayerSegmentColour(int playerCode, char colour);
     uint32_t getColour(char colour);
 
-    void updatePixelsColors(unsigned long currentime);
-    void updateCountDown(unsigned long currenttime);
-    void updateCountUp(unsigned long currenttime);
+    void updatePixelsColors(unsigned long currentTime);
+    void updateCountDown(unsigned long currentTime);
+    void updateCountUp(unsigned long currentTime);
     void updateSpeed();
 
-    void countDown(int playerCode1, int playerCode2, int duration, unsigned long starttime);
-    void countUp(int duration, unsigned long starttime);
+    void countDown(int playerCode1, int playerCode2, int duration, unsigned long startTime);
+    void countUp(int duration, unsigned long startTime);
     void displaySpeed(int playerCode, int buttonSpeed);
 
-    void frenzy(int duration, unsigned long starttime);
-    void updateFrenzy(unsigned long currenttime);
+    void frenzy(int duration, unsigned long startTime);
+    void updateFrenzy(unsigned long currentTime);
 
-    bool isCountingDown;
-    bool isFrenzy;
-    bool isCountingUp;
+    bool isCountingDown();
+    bool isCountingUp();
+    bool isFrenzy();
+
 
   private:
     int _pixelPin;
     int _totalLength;
 
     int _topSegmentFirstIndex;
+    int _topSegmentLastIndex;
     int _topSegmentLength;
     int _rightSegmentFirstIndex;
     int _leftSegmentLength;
@@ -56,7 +58,7 @@ class NeopixelCtrl {
 
     int _playerCodes[MAXPLAYERS];
     uint32_t _playerColours[MAXPLAYERS];
-    int _playerFirstIndex[MAXPLAYERS];
+    int _playerPixelIndices[MAXPLAYERS][2];
     int _playerSpeed[MAXPLAYERS];
 
     int _countdownPlayerLeft;
@@ -70,6 +72,11 @@ class NeopixelCtrl {
     unsigned long _frenzyOldTime;
     unsigned long _frenzyStartTime;
     int _frenzyDuration;
+
+    
+bool _isCountingDown;
+bool _isFrenzy;
+bool _isCountingUp;
 
 
 
