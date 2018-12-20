@@ -18,6 +18,7 @@ int _pixelPin;
 int _totalLength;
 
 int _topSegmentFirstIndex;
+int _topSegmentLastIndex;
 int _topSegmentLength;
 int _rightSegmentFirstIndex;
 int _leftSegmentLength;
@@ -29,24 +30,25 @@ int _numPlayers;
 
 int _playerCodes[MAXPLAYERS];
 uint32_t _playerColours[MAXPLAYERS];
-int _playerFirstIndex[MAXPLAYERS];
+int _playerPixelIndices[MAXPLAYERS][2];
 int _playerSpeed[MAXPLAYERS];
+int _playerPixelLengths[MAXPLAYERS];
 
 int _countdownPlayerLeft;
 int _countdownPlayerRight;
 unsigned long _countdownStartTime;
-int _countdownDuration;
+unsigned long _countdownDuration;
 
 unsigned long _countupStartTime;
-int _countupDuration;
+unsigned long _countupDuration;
 
 unsigned long _frenzyOldTime;
 unsigned long _frenzyStartTime;
-int _frenzyDuration;
+unsigned long _frenzyDuration;
 
-bool isCountingDown;
-bool isFrenzy;
-bool isCountingUp;
+bool _isCountingDown;
+bool _isFrenzy;
+bool _isCountingUp;
 
 Adafruit_NeoPixel* _pixelsPtr;
 
@@ -58,21 +60,23 @@ NeopixelCtrl :: NeopixelCtrl (Adafruit_NeoPixel* pixelsPtr, int totalLength, int
   _totalLength = totalLength;
   _pixelPin = pixelPin;
 
-  isCountingDown = false;
-  isCountingUp = false;
-  isFrenzy = false;                 // initialize all actions to false
+  _isCountingDown = false;
+  _isCountingUp = false;
+  _isFrenzy = false;                 // initialize all actions to false
 }
 
-void NeopixelCtrl :: setTopSegment(int firstPixel, int segLength) {
+void NeopixelCtrl :: setTopSegment(int firstPixel, int lastPixel) {
   _topSegmentFirstIndex = firstPixel;
-  _topSegmentLength = segLength;
+  _topSegmentLastIndex = lastPixel;
 
-  if (segLength % 2 != 0) {
-    _leftSegmentLength = segLength / 2 + 1;
-    _rightSegmentLength = segLength / 2;
+  _topSegmentLength = _topSegmentLastIndex - _topSegmentFirstIndex + 1;
+
+  if (_topSegmentLength % 2 != 0) {
+    _leftSegmentLength = _topSegmentLength / 2 + 1;
+    _rightSegmentLength = _topSegmentLength / 2;
   }
   else {
-    _leftSegmentLength = segLength / 2;
+    _leftSegmentLength = _topSegmentLength / 2;
     _rightSegmentLength = _leftSegmentLength;
   }                                               // in case of asymmetrical display
   // or if one pixel goes off the code can still sort of run with just minor index adjustment
@@ -84,21 +88,10 @@ void NeopixelCtrl :: setTopSegment(int firstPixel, int segLength) {
   // can be overwritten in the setPlayerSegments function
 }
 
-void NeopixelCtrl :: setPlayerSegments(int numPlayers, int segLength, bool gap, int startPixel) {
-  // whether the player segments are indexed right after the top segment or not
-  // If gap = false, put the index of the first neopixel in player segment here
-  // If gap = true, just put any integer, 0 works fine.
-  if (gap) {
-    _playerSegmentFirstIndex = startPixel;
-  }
-
-  for (int i = 0; i < numPlayers; i++) {
-    _playerCodes[i] = i + 1;
-  }
-
-  for (int i = 0; i < numPlayers; i++) {
-    _playerFirstIndex[i] = _playerSegmentFirstIndex + i * segLength;
-  }
+void NeopixelCtrl :: setPlayerSegment(int playerCode, int firstPixel, int lastPixel) {
+  _playerPixelIndices[playerCode - 1][0] = firstPixel;
+  _playerPixelIndices[playerCode - 1][1] = lastPixel;
+  _playerPixelLengths[playerCode - 1] = lastPixel - firstPixel + 1;
 }
 
 uint32_t NeopixelCtrl :: getColour(char colour) {
@@ -120,17 +113,17 @@ uint32_t NeopixelCtrl :: getColour(char colour) {
   }
 }
 
-void NeopixelCtrl :: setPlayerSegmentsColour(int playerCode, char colour) {
+void NeopixelCtrl :: setPlayerSegmentColour(int playerCode, char colour) {
   _playerColours[playerCode - 1] = getColour(colour);
 }
 
-void NeopixelCtrl :: countDown(int playerCode1, int playerCode2, int duration, unsigned long starttime) {
+void NeopixelCtrl :: countDown(int playerCode1, int playerCode2, int duration, unsigned long startTime) {
 
-  if (isCountingUp || isFrenzy) {
-    isCountingUp = false;
-    isFrenzy = false;
+  if (_isCountingUp || _isFrenzy) {
+    _isCountingUp = false;
+    _isFrenzy = false;
   }                                       // for safety
-  isCountingDown = true;
+  _isCountingDown = true;
 
   if (playerCode1 > playerCode2) {
     int temp = playerCode1;
@@ -141,16 +134,20 @@ void NeopixelCtrl :: countDown(int playerCode1, int playerCode2, int duration, u
   _countdownPlayerLeft = playerCode1;
   _countdownPlayerRight = playerCode2;
 
-  _countdownStartTime = starttime;
+  _countdownStartTime = startTime;
   _countdownDuration = duration * 1000; // convert milliseconds to seconds
 }
 
-void NeopixelCtrl :: updateCountDown(unsigned long currenttime) {
+void NeopixelCtrl :: updateCountDown(unsigned long currentTime) {
 
-  int timeElapsed = (int)(currenttime - _countdownStartTime);
+  unsigned long timeElapsed = currentTime - _countdownStartTime;
 
   int numPixelLeft = map(timeElapsed, 0, _countdownDuration, _leftSegmentLength, 0);
   int numPixelRight = map(timeElapsed, 0, _countdownDuration, _rightSegmentLength, 0);
+
+  for (int i = 0; i < _topSegmentLength; i++) {
+    _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(0, 0, 0));
+  }
 
   for (int i = 0; i < numPixelLeft; i++) {
     _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _playerColours[_countdownPlayerLeft - 1]);
@@ -161,40 +158,39 @@ void NeopixelCtrl :: updateCountDown(unsigned long currenttime) {
   }
 
   if (timeElapsed > _countdownDuration) {
-    isCountingDown = false;
+    _isCountingDown = false;
   }
 
 }
 
-void NeopixelCtrl :: countUp(int duration, unsigned long starttime) {
+void NeopixelCtrl :: countUp(int duration, unsigned long startTime) {
 
-  if (isCountingDown || isFrenzy) {
-    isCountingDown = false;
-    isFrenzy = false;
+  if (_isCountingDown || _isFrenzy) {
+    _isCountingDown = false;
+    _isFrenzy = false;
   }
-  isCountingUp = true;
+  _isCountingUp = true;
 
-  _countupStartTime = starttime;
+  _countupStartTime = startTime;
   _countupDuration = duration;
 }
 
-void NeopixelCtrl :: updateCountUp(unsigned long currenttime) {
+void NeopixelCtrl :: updateCountUp(unsigned long currentTime) {
 
-  int timeElapsed = (int)(currenttime - _countupStartTime);
-  // to save memory
+  unsigned long timeElapsed = currentTime - _countupStartTime;
 
   int numPixel = map(timeElapsed, 0, _countupDuration, 0, _topSegmentLength);
 
-  int R = random(0, 255);
-  int G = random(0, 255);
-  int B = random(0, 255);
+  for (int i = 0; i < _topSegmentLength; i++) {
+    _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(0, 0, 0));
+  }
 
   for (int i = 0; i < numPixel; i++) {
-    _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(R, G, B));
+    _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(255, 255, 255));
   }
 
   if (timeElapsed > _countupDuration) {
-    isCountingDown = false;
+    _isCountingDown = false;
   }
 }
 
@@ -205,25 +201,27 @@ void NeopixelCtrl :: displaySpeed(int playerCode, int buttonSpeed) {
 void NeopixelCtrl :: updateSpeed() {
   for (int i = 0; i < _numPlayers; i++) {
     int thisPlayerSpeed = _playerSpeed[i];
-    int numPixel = map(thisPlayerSpeed, 0, MAXSPEED, 0, _playerSegmentEachLength);
-    // !!!!!!!!!!!!!! //
-    // TO BE ADJUSTED //
-    // !!!!!!!!!!!!!! //
+
+    int thisPlayerFirstIndex = _playerPixelIndices[i][0];
+    int thisPlayerPixelLength = _playerPixelLengths[i];
+
+    int numPixel = map(thisPlayerSpeed, 0, MAXSPEED, 0, thisPlayerPixelLength);
+
     for (int j = 0; j < numPixel; j++) {
-      _pixelsPtr->setPixelColor(_playerSegmentFirstIndex + i * _playerSegmentEachLength + j, _playerColours[i]);
+      _pixelsPtr->setPixelColor(thisPlayerFirstIndex + j, _playerColours[i]);
     }
   }
 }
 
-void NeopixelCtrl :: updatePixelsColors(unsigned long currenttime) {
-  if (isCountingDown) {
-    updateCountDown(currenttime);
+void NeopixelCtrl :: updatePixelsColors(unsigned long currentTime) {
+  if (_isCountingDown) {
+    updateCountDown(currentTime);
   }
-  else if (isCountingUp) {
-    updateCountUp(currenttime);
+  else if (_isCountingUp) {
+    updateCountUp(currentTime);
   }
-  else if (isFrenzy) {
-    updateFrenzy(currenttime);
+  else if (_isFrenzy) {
+    updateFrenzy(currentTime);
   }
 
   updateSpeed();  // always activated so that players can check if the button is working
@@ -231,20 +229,20 @@ void NeopixelCtrl :: updatePixelsColors(unsigned long currenttime) {
   _pixelsPtr->show();
 }
 
-void NeopixelCtrl :: frenzy(int duration, unsigned long starttime) {
-  if (isCountingDown || isCountingUp) {
-    isCountingDown = false;
-    isCountingUp = false;
+void NeopixelCtrl :: frenzy(int duration, unsigned long startTime) {
+  if (_isCountingDown || _isCountingUp) {
+    _isCountingDown = false;
+    _isCountingUp = false;
   }
-  isFrenzy = true;
+  _isFrenzy = true;
 
   _frenzyDuration = duration * 1000; // convert second to millisecond
-  _frenzyStartTime = starttime;
+  _frenzyStartTime = startTime;
 }
 
-void NeopixelCtrl :: updateFrenzy(unsigned long currenttime) {
+void NeopixelCtrl :: updateFrenzy(unsigned long currentTime) {
 
-  if ((currenttime - _frenzyOldTime > 50) && (currenttime - _frenzyOldTime < _frenzyDuration)) {    // for stability
+  if ((currentTime - _frenzyOldTime > 50) && (currentTime - _frenzyOldTime < _frenzyDuration)) {    // for stability
     // arbitrary gap in milliseconds
     // can be adjusted
 
@@ -253,8 +251,8 @@ void NeopixelCtrl :: updateFrenzy(unsigned long currenttime) {
     }
 
   }
-  else if (currenttime - _frenzyOldTime > _frenzyDuration) {
-    isFrenzy = false;
+  else if (currentTime - _frenzyOldTime > _frenzyDuration) {
+    _isFrenzy = false;
 
     for (int i = 0; i < _topSegmentLength; i++) {
       _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(0, 0, 0));
@@ -263,38 +261,14 @@ void NeopixelCtrl :: updateFrenzy(unsigned long currenttime) {
 
 }
 
-/*
+bool NeopixelCtrl :: isCountingDown() {
+  return _isCountingDown;
+}
 
-  getPixelPin();
-  getTotalLength();
+bool NeopixelCtrl :: isCountingUp() {
+  return _isCountingUp;
+}
 
-  getTopSegmentFirstIndex();
-  getTopSegmentLastIndex();
-  getTopSegmentLength();
-
-  getLeftTopSegmentFirstIndex();
-  getLeftTopSegmentLastIndex();
-  getLeftTopSegmentLength();
-
-  getRightTopSegmentFirstIndex();
-  getRightTopSegmentLastIndex();
-  getRightTopSegmentLength();
-
-  getPlayerSegmentFirstIndex(int playerCode);
-    getPlayerSegmentLength(int playerCode);
-    getPlayerSegmentLastIndex(int playerCode);
-*/
-
-/*
-  int _pixelPin;
-  int _totalLength;
-
-  int _topSegmentFirstIndex;
-  int _topSegmentLength;
-  int _rightSegmentFirstIndex;
-  int _rightSegmentLength;
-
-  int _playerSegmentFirstIndex;
-  int _playerSegmentEachLength;
-  int _numPlayers;
-*/
+bool NeopixelCtrl :: isFrenzy() {
+  return _isFrenzy;
+}
