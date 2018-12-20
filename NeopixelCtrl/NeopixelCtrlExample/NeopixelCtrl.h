@@ -19,22 +19,16 @@ class NeopixelCtrl {
     NeopixelCtrl(Adafruit_NeoPixel* pixelsPtr, int pixelPin, int totalLength);
 
     void setTopSegment(int firstPixel, int segLength);
+    
     void setPlayerSegment(int playerCode, int firstPixel, int lastPixel);
-
     void setPlayerSegmentColour(int playerCode, char colour);
-    uint32_t getColour(char colour);
 
     void updatePixelsColors(unsigned long currentTime);
-    void updateCountDown(unsigned long currentTime);
-    void updateCountUp(unsigned long currentTime);
-    void updateSpeed();
 
     void countDown(int playerCode1, int playerCode2, int duration, unsigned long startTime);
     void countUp(int duration, unsigned long startTime);
     void displaySpeed(int playerCode, int buttonSpeed);
-
     void frenzy(int duration, unsigned long startTime);
-    void updateFrenzy(unsigned long currentTime);
 
     bool isCountingDown();
     bool isCountingUp();
@@ -42,6 +36,14 @@ class NeopixelCtrl {
 
 
   private:
+
+    uint32_t getColour(char colour);
+
+    void updateCountDown(unsigned long currentTime);
+    void updateCountUp(unsigned long currentTime);
+    void updateSpeed();
+    void updateFrenzy(unsigned long currentTime);
+
     int _pixelPin;
     int _totalLength;
 
@@ -73,13 +75,9 @@ class NeopixelCtrl {
     unsigned long _frenzyStartTime;
     int _frenzyDuration;
 
-    
-bool _isCountingDown;
-bool _isFrenzy;
-bool _isCountingUp;
-
-
-
+    bool _isCountingDown;
+    bool _isFrenzy;
+    bool _isCountingUp;
 
     Adafruit_NeoPixel pixelsPtr;
 };
