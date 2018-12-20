@@ -7,7 +7,7 @@
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXEL_PIN);        //need to create a pixel object FIRST
 NeopixelCtrl pixelsCtrl = NeopixelCtrl(&pixels, NUMPIXELS, NEOPIXEL_PIN);     //then pass the pointer to the NeopixelCtrl object
 
-unsigned long currenttime = millis();
+unsigned long currenttime;
 
 void setup() {
   pixels.begin();
@@ -26,19 +26,22 @@ void setup() {
 }
 
 void loop() {
-
+  
+  currenttime = millis();
   pixelsCtrl.countDown(1, 2, 10, currenttime);
 
   while (pixelsCtrl.isCountingDown) {
-    updatePixels();
+    updatePixels(); // the millis function is already included
   }
-
+  
+  currenttime = millis();
   pixelsCtrl.frenzy(10, currenttime);
 
   while (pixelsCtrl.isFrenzy) {
     updatePixels();
   }
-
+  
+  currenttime = millis();
   pixelsCtrl.countUp(10, currenttime);
 
   while (pixelsCtrl.isCountingUp) {
@@ -47,6 +50,8 @@ void loop() {
 }
 
 void updatePixels() {
+
+  currenttime = millis();
 
   // display speed calls are placed here so that the speed strip can change independently of the top strip control
 
