@@ -7,67 +7,95 @@
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXEL_PIN);        //need to create a pixel object FIRST
 NeopixelCtrl pixelsCtrl = NeopixelCtrl(&pixels, NUMPIXELS, NEOPIXEL_PIN);     //then pass the pointer to the NeopixelCtrl object
 
-unsigned long currenttime;
+unsigned long currentTime;
 
 void setup() {
   pixels.begin();
   pixels.show();
 
-  randomSeed(analogRead(A0));                                                 // for frenzy
+  randomSeed(analogRead(A0));                                                 // for frenzy random colour
 
-  pixelsCtrl.setTopSegment(0, 40);                                            // set the top segment first pixel index to 0
-  pixelsCtrl.setPlayerSegments(4, 10, false, 0);                           // set 4 player segments of length 10 each. The index runs continuously between players
-  // if the ENTIRE player segments need to be shifted to other index, indicate this as true
-  // and set the first index of the player segments here
-  pixelsCtrl.setPlayerSegmentsColour(1, 'R'); // red
-  pixelsCtrl.setPlayerSegmentsColour(2, 'G'); // green
-  pixelsCtrl.setPlayerSegmentsColour(3, 'B'); // blue
-  pixelsCtrl.setPlayerSegmentsColour(4, 'Y'); // yellow (other options are cyan 'C' and magenta 'M')
+  pixelsCtrl.setTopSegment(0, 39);
+  // set the top segment pixels to 0 thru 39
+
+  pixelsCtrl.setPlayerSegment(1, 42, 51);
+  // set Player 1 segment pixels to 41 thru 60
+
+  pixelsCtrl.setPlayerSegment(2, 54, 63);
+  // set Player 2 segment pixels to 54 thru 63
+
+  pixelsCtrl.setPlayerSegment(3, 66, 75);
+  // set Player 3 segment pixels to 66 thru 75
+
+  pixelsCtrl.setPlayerSegment(3, 78, 87);
+  // set Player 4 segment pixels to 78 thru 87
+
+  pixelsCtrl.setPlayerSegmentColour(1, 'R');
+  // set Player 1 segment pixel colour to red
+
+  pixelsCtrl.setPlayerSegmentColour(2, 'G');
+  // set Player 2 segment pixel colour to green
+  
+  pixelsCtrl.setPlayerSegmentColour(3, 'B'); 
+  // set Player 3 segment pixel colour to blue
+  
+  pixelsCtrl.setPlayerSegmentColour(4, 'Y'); 
+  // set Player 4 segment pixel colour to yellow 
+  
+  // (other colour options are cyan 'C' and magenta 'M')
 }
-  
-void loop() {
-  
-  currenttime = millis();
-  pixelsCtrl.countDown(1, 2, 10, currenttime);
 
-  while (pixelsCtrl.isCountingDown) {
+void loop() {
+
+  // This should show the left side as red (P1 colour), right side as green (P2 colour)
+  // and countdown from both sides for 10 seconds
+
+  currentTime = millis();
+  //  pixelsCtrl.countDown(leftPlayer, rightPlayer, duration, startTime);
+  pixelsCtrl.countDown(1, 2, 10, currentTime);    // Player 1 on the left half, Player 2 on the right half   
+                                                                                                
+  
+  while (pixelsCtrl.isCountingDown()) {
     updatePixels(); // the millis function is already included
   }
-  
-  currenttime = millis();
-  pixelsCtrl.frenzy(10, currenttime);
 
-  while (pixelsCtrl.isFrenzy) {
+  // Showing random colours for 10 seconds
+
+  currentTime = millis();
+  pixelsCtrl.frenzy(10, currentTime);
+    
+  while (pixelsCtrl.isFrenzy()) {
     updatePixels();
   }
-  
-  currenttime = millis();
-  pixelsCtrl.countUp(10, currenttime);
 
-  while (pixelsCtrl.isCountingUp) {
+  // Counting up for 10 seconds using the entire top segment
+
+  currentTime = millis();
+  pixelsCtrl.countUp(10, currentTime);
+
+  while (pixelsCtrl.isCountingUp()) {
     updatePixels();
   }
 }
 
 void updatePixels() {
 
-  currenttime = millis();
-
   // display speed calls are placed here so that the speed strip can change independently of the top strip control
 
   // change out random() to playerXXX.getSpeed() when ready
   // the randoms are for testing purpose
 
-  pixelsCtrl.displaySpeed(1, random(0,100));
-  pixelsCtrl.displaySpeed(2, random(0,100));
-  pixelsCtrl.displaySpeed(3, random(0,100));
-  pixelsCtrl.displaySpeed(4, random(0,100));
+  pixelsCtrl.displaySpeed(1, random(0, 100));
+  pixelsCtrl.displaySpeed(2, random(0, 100));
+  pixelsCtrl.displaySpeed(3, random(0, 100));
+  pixelsCtrl.displaySpeed(4, random(0, 100));
 
   // pixelsCtrl.displaySpeed(1, playerOne.getSpeed());
   // pixelsCtrl.displaySpeed(2, playerTwo.getSpeed());
   // pixelsCtrl.displaySpeed(3, playerThree.getSpeed());
   // pixelsCtrl.displaySpeed(4, playerFour.getSpeed());
-  
-  pixelsCtrl.updatePixelsColors(currenttime);
+
+  currentTime = millis();
+  pixelsCtrl.updatePixelsColors(currentTime);
   pixels.show();
 }
