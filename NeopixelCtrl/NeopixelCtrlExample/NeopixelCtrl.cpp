@@ -12,8 +12,6 @@
 #define MAXPLAYERS 4
 #define MAXSPEED 100
 
-// fields
-
 int _pixelPin;
 int _totalLength;
 
