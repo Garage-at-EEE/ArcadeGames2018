@@ -24,7 +24,7 @@ void setup() {
   pixelsCtrl.setPlayerSegmentsColour(3, 'B'); // blue
   pixelsCtrl.setPlayerSegmentsColour(4, 'Y'); // yellow (other options are cyan 'C' and magenta 'M')
 }
-
+  
 void loop() {
   
   currenttime = millis();
@@ -58,15 +58,15 @@ void updatePixels() {
   // change out random() to playerXXX.getSpeed() when ready
   // the randoms are for testing purpose
 
-  displaySpeed(1, random(0,100));
-  displaySpeed(2, random(0,100));
-  displaySpeed(3, random(0,100));
-  displaySpeed(4, random(0,100));
+  pixelsCtrl.displaySpeed(1, random(0,100));
+  pixelsCtrl.displaySpeed(2, random(0,100));
+  pixelsCtrl.displaySpeed(3, random(0,100));
+  pixelsCtrl.displaySpeed(4, random(0,100));
 
-    // displaySpeed(1, playerOne.getSpeed());
-  // displaySpeed(2, playerTwo.getSpeed());
-  // displaySpeed(3, playerThree.getSpeed());
-  // displaySpeed(4, playerFour.getSpeed());
+  // pixelsCtrl.displaySpeed(1, playerOne.getSpeed());
+  // pixelsCtrl.displaySpeed(2, playerTwo.getSpeed());
+  // pixelsCtrl.displaySpeed(3, playerThree.getSpeed());
+  // pixelsCtrl.displaySpeed(4, playerFour.getSpeed());
   
   pixelsCtrl.updatePixelsColors(currenttime);
   pixels.show();
