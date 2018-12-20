@@ -145,10 +145,6 @@ void NeopixelCtrl :: updateCountDown(unsigned long currentTime) {
   int numPixelLeft = map(timeElapsed, 0, _countdownDuration, _leftSegmentLength, 0);
   int numPixelRight = map(timeElapsed, 0, _countdownDuration, _rightSegmentLength, 0);
 
-  for (int i = 0; i < _topSegmentLength; i++) {
-    _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(0, 0, 0));
-  }
-
   for (int i = 0; i < numPixelLeft; i++) {
     _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _playerColours[_countdownPlayerLeft - 1]);
   }
@@ -181,10 +177,6 @@ void NeopixelCtrl :: updateCountUp(unsigned long currentTime) {
 
   int numPixel = map(timeElapsed, 0, _countupDuration, 0, _topSegmentLength);
 
-  for (int i = 0; i < _topSegmentLength; i++) {
-    _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(0, 0, 0));
-  }
-
   for (int i = 0; i < numPixel; i++) {
     _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(255, 255, 255));
   }
@@ -214,6 +206,11 @@ void NeopixelCtrl :: updateSpeed() {
 }
 
 void NeopixelCtrl :: updatePixelsColors(unsigned long currentTime) {
+
+  for (int i = 0; i < _totalLength; i++) {
+    _pixelsPtr->setPixelColor(i, _pixelsPtr->Color(0, 0, 0));
+  }
+  
   if (_isCountingDown) {
     updateCountDown(currentTime);
   }
