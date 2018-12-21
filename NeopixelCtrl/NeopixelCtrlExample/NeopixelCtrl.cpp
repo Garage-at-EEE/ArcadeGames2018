@@ -180,7 +180,7 @@ void NeopixelCtrl :: updateCountUp(unsigned long currentTime) {
   }
 
   if (timeElapsed > _countupDuration) {
-    _isCountingDown = false;
+    _isCountingUp = false;
   }
 }
 
