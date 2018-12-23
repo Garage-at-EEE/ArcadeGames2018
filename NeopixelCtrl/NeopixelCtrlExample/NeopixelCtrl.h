@@ -54,32 +54,31 @@ class NeopixelCtrl {
     int _leftSegmentLength;
     int _rightSegmentLength;
 
-    int _playerSegmentFirstIndex;
-    int _playerSegmentEachLength;
     int _numPlayers;
 
     int _playerCodes[MAXPLAYERS];
     uint32_t _playerColours[MAXPLAYERS];
     int _playerPixelIndices[MAXPLAYERS][2];
     int _playerSpeed[MAXPLAYERS];
+    int _playerPixelLengths[MAXPLAYERS];
 
     int _countdownPlayerLeft;
     int _countdownPlayerRight;
     unsigned long _countdownStartTime;
-    int _countdownDuration;
+    unsigned long _countdownDuration;
 
     unsigned long _countupStartTime;
-    int _countupDuration;
+    unsigned long _countupDuration;
 
     unsigned long _frenzyOldTime;
     unsigned long _frenzyStartTime;
-    int _frenzyDuration;
+    unsigned long _frenzyDuration;
 
     bool _isCountingDown;
     bool _isFrenzy;
     bool _isCountingUp;
 
-    Adafruit_NeoPixel pixelsPtr;
+    Adafruit_NeoPixel* _pixelsPtr;
 };
 
 #endif
