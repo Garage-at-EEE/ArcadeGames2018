@@ -5,52 +5,7 @@
   Garage@EEE, School of Electrical and Electronic Engineering, Nanyang Technological University, Singapore.
 */
 
-#include <Arduino.h>
-#include <Adafruit_NeoPixel.h>
 #include "NeopixelCtrl.h"
-
-#define MAXPLAYERS 4
-#define MAXSPEED 100
-
-int _pixelPin;
-int _totalLength;
-
-int _topSegmentFirstIndex;
-int _topSegmentLastIndex;
-int _topSegmentLength;
-int _rightSegmentFirstIndex;
-int _leftSegmentLength;
-int _rightSegmentLength;
-
-int _playerSegmentFirstIndex;
-int _playerSegmentEachLength;
-int _numPlayers;
-
-int _playerCodes[MAXPLAYERS];
-uint32_t _playerColours[MAXPLAYERS];
-int _playerPixelIndices[MAXPLAYERS][2];
-int _playerSpeed[MAXPLAYERS];
-int _playerPixelLengths[MAXPLAYERS];
-
-int _countdownPlayerLeft;
-int _countdownPlayerRight;
-unsigned long _countdownStartTime;
-unsigned long _countdownDuration;
-
-unsigned long _countupStartTime;
-unsigned long _countupDuration;
-
-unsigned long _frenzyOldTime;
-unsigned long _frenzyStartTime;
-unsigned long _frenzyDuration;
-
-bool _isCountingDown;
-bool _isFrenzy;
-bool _isCountingUp;
-
-Adafruit_NeoPixel* _pixelsPtr;
-
-// methods
 
 NeopixelCtrl :: NeopixelCtrl (Adafruit_NeoPixel* pixelsPtr, int totalLength, int pixelPin) {
 
@@ -80,10 +35,6 @@ void NeopixelCtrl :: setTopSegment(int firstPixel, int lastPixel) {
   // or if one pixel goes off the code can still sort of run with just minor index adjustment
 
   _rightSegmentFirstIndex = _topSegmentFirstIndex + _leftSegmentLength;
-
-  _playerSegmentFirstIndex = _rightSegmentFirstIndex + _rightSegmentLength;
-  // set the player segment index to right after the last top segment index
-  // can be overwritten in the setPlayerSegments function
 }
 
 void NeopixelCtrl :: setPlayerSegment(int playerCode, int firstPixel, int lastPixel) {
