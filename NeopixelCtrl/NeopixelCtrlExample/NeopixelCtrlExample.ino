@@ -27,7 +27,7 @@ void setup() {
   pixelsCtrl.setPlayerSegment(3, 66, 75);
   // set Player 3 segment pixels to 66 thru 75
 
-  pixelsCtrl.setPlayerSegment(3, 78, 87);
+  pixelsCtrl.setPlayerSegment(4, 78, 87);
   // set Player 4 segment pixels to 78 thru 87
 
   pixelsCtrl.setPlayerSegmentColour(1, 'R');
@@ -35,13 +35,13 @@ void setup() {
 
   pixelsCtrl.setPlayerSegmentColour(2, 'G');
   // set Player 2 segment pixel colour to green
-  
-  pixelsCtrl.setPlayerSegmentColour(3, 'B'); 
+
+  pixelsCtrl.setPlayerSegmentColour(3, 'B');
   // set Player 3 segment pixel colour to blue
-  
-  pixelsCtrl.setPlayerSegmentColour(4, 'Y'); 
-  // set Player 4 segment pixel colour to yellow 
-  
+
+  pixelsCtrl.setPlayerSegmentColour(4, 'Y');
+  // set Player 4 segment pixel colour to yellow
+
   // (other colour options are cyan 'C' and magenta 'M')
 }
 
@@ -51,10 +51,11 @@ void loop() {
   // and countdown from both sides for 10 seconds
 
   currentTime = millis();
-  //  pixelsCtrl.countDown(leftPlayer, rightPlayer, duration, startTime);
-  pixelsCtrl.countDown(1, 2, 10, currentTime);    // Player 1 on the left half, Player 2 on the right half   
-                                                                                                
   
+  //  pixelsCtrl.countDown(leftPlayer, rightPlayer, duration_in_seconds, startTime);
+  pixelsCtrl.countDown(1, 2, 10, currentTime);    // Player 1 on the left half, Player 2 on the right half
+
+
   while (pixelsCtrl.isCountingDown()) {
     updatePixels(); // the millis function is already included
   }
@@ -63,9 +64,9 @@ void loop() {
 
   currentTime = millis();
   pixelsCtrl.frenzy(10, currentTime);
-    
+
   while (pixelsCtrl.isFrenzy()) {
-    updatePixels();
+    updatePixels(); // the millis function is already included
   }
 
   // Counting up for 10 seconds using the entire top segment
@@ -74,7 +75,7 @@ void loop() {
   pixelsCtrl.countUp(10, currentTime);
 
   while (pixelsCtrl.isCountingUp()) {
-    updatePixels();
+    updatePixels(); // the millis function is already included
   }
 }
 

@@ -27,13 +27,14 @@ class NeopixelCtrl {
 
     void countDown(int playerCode1, int playerCode2, int duration, unsigned long startTime);
     void countUp(int duration, unsigned long startTime);
-    void displaySpeed(int playerCode, int buttonSpeed);
+    
     void frenzy(int duration, unsigned long startTime);
+
+    void displaySpeed(int playerCode, int buttonSpeed);
 
     bool isCountingDown();
     bool isCountingUp();
     bool isFrenzy();
-
 
   private:
 
@@ -41,7 +42,7 @@ class NeopixelCtrl {
 
     void updateCountDown(unsigned long currentTime);
     void updateCountUp(unsigned long currentTime);
-    void updateSpeed();
+    void updateSpeed(void);
     void updateFrenzy(unsigned long currentTime);
 
     int _pixelPin;
@@ -82,24 +83,3 @@ class NeopixelCtrl {
 };
 
 #endif
-
-/*
-    getPixelPin();
-    getTotalLength();
-
-    getTopSegmentFirstIndex();
-    getTopSegmentLastIndex();
-    getTopSegmentLength();
-
-    getLeftTopSegmentFirstIndex();
-    getLeftTopSegmentLastIndex();
-    getLeftTopSegmentLength();
-
-    getRightTopSegmentFirstIndex();
-    getRightTopSegmentLastIndex();
-    getRightTopSegmentLength();
-
-    getPlayerSegmentFirstIndex(int playerCode);
-    getPlayerSegmentLength(int playerCode);
-    getPlayerSegmentLastIndex(int playerCode);
-*/

@@ -26,7 +26,7 @@ void NeopixelCtrl :: setTopSegment(int firstPixel, int lastPixel) {
 
   if (_topSegmentLength % 2 != 0) {
     _leftSegmentLength = _topSegmentLength / 2 + 1;
-    _rightSegmentLength = _topSegmentLength / 2;
+    _rightSegmentLength = _topSegmentLength - _leftSegmentLength;
   }
   else {
     _leftSegmentLength = _topSegmentLength / 2;
@@ -72,6 +72,7 @@ void NeopixelCtrl :: countDown(int playerCode1, int playerCode2, int duration, u
     _isCountingUp = false;
     _isFrenzy = false;
   }                                       // for safety
+
   _isCountingDown = true;
 
   if (playerCode1 > playerCode2) {
@@ -91,21 +92,23 @@ void NeopixelCtrl :: updateCountDown(unsigned long currentTime) {
 
   unsigned long timeElapsed = currentTime - _countdownStartTime;
 
+  if (timeElapsed > _countdownDuration) {
+    _isCountingDown = false;
+    return;
+  }
+
   int numPixelLeft = map(timeElapsed, 0, _countdownDuration, _leftSegmentLength, 0);
   int numPixelRight = map(timeElapsed, 0, _countdownDuration, _rightSegmentLength, 0);
 
+  int leftSegmentLastIndex = _rightSegmentFirstIndex - 1;
+
   for (int i = 0; i < numPixelLeft; i++) {
-    _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _playerColours[_countdownPlayerLeft - 1]);
+    _pixelsPtr->setPixelColor(leftSegmentLastIndex - i, _playerColours[_countdownPlayerLeft - 1]);
   }
 
   for (int i = 0; i < numPixelRight; i++) {
     _pixelsPtr->setPixelColor(_rightSegmentFirstIndex + i, _playerColours[_countdownPlayerRight - 1]);
   }
-
-  if (timeElapsed > _countdownDuration) {
-    _isCountingDown = false;
-  }
-
 }
 
 void NeopixelCtrl :: countUp(int duration, unsigned long startTime) {
@@ -114,6 +117,7 @@ void NeopixelCtrl :: countUp(int duration, unsigned long startTime) {
     _isCountingDown = false;
     _isFrenzy = false;
   }
+
   _isCountingUp = true;
 
   _countupStartTime = startTime;
@@ -124,18 +128,53 @@ void NeopixelCtrl :: updateCountUp(unsigned long currentTime) {
 
   unsigned long timeElapsed = currentTime - _countupStartTime;
 
+  if (timeElapsed > _countupDuration) {
+    _isCountingUp = false;
+    return;
+  }
+
   int numPixel = map(timeElapsed, 0, _countupDuration, 0, _topSegmentLength);
 
   for (int i = 0; i < numPixel; i++) {
     _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(255, 255, 255));
   }
 
-  if (timeElapsed > _countupDuration) {
+}
+
+void NeopixelCtrl :: frenzy(int duration, unsigned long startTime) {
+  if (_isCountingDown || _isCountingUp) {
+    _isCountingDown = false;
     _isCountingUp = false;
   }
+  
+  _isFrenzy = true;
+
+  _frenzyDuration = duration * 1000; // convert second to millisecond
+  _frenzyStartTime = startTime;
+  _frenzyOldTime = startTime;
+}
+
+void NeopixelCtrl :: updateFrenzy(unsigned long currentTime) {
+
+  if ((currentTime - _frenzyOldTime > 100) && (currentTime - _frenzyOldTime < _frenzyDuration)) {    // for stability
+    for (int i = 0; i < _topSegmentLength; i++) {
+      _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(random(0, 255), random(0, 255), random(0, 255)));
+    }
+  }
+  else if (currentTime - _frenzyOldTime > _frenzyDuration) {
+    _isFrenzy = false;
+
+    for (int i = 0; i < _topSegmentLength; i++) {
+      _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(0, 0, 0));
+    }
+  }
+
+  _frenzyOldTime = currentTime;
+
 }
 
 void NeopixelCtrl :: displaySpeed(int playerCode, int buttonSpeed) {
+  buttonSpeed = constrain(buttonSpeed, 0, MAXSPEED);
   _playerSpeed[playerCode - 1] = buttonSpeed;
 }
 
@@ -157,9 +196,9 @@ void NeopixelCtrl :: updateSpeed() {
 void NeopixelCtrl :: updatePixelsColors(unsigned long currentTime) {
 
   for (int i = 0; i < _totalLength; i++) {
-    _pixelsPtr->setPixelColor(i, _pixelsPtr->Color(0, 0, 0));
+    _pixelsPtr->setPixelColor(i, _pixelsPtr->Color(0, 0, 0));   // "turn off" all neopixels
   }
-  
+
   if (_isCountingDown) {
     updateCountDown(currentTime);
   }
@@ -175,37 +214,7 @@ void NeopixelCtrl :: updatePixelsColors(unsigned long currentTime) {
   _pixelsPtr->show();
 }
 
-void NeopixelCtrl :: frenzy(int duration, unsigned long startTime) {
-  if (_isCountingDown || _isCountingUp) {
-    _isCountingDown = false;
-    _isCountingUp = false;
-  }
-  _isFrenzy = true;
 
-  _frenzyDuration = duration * 1000; // convert second to millisecond
-  _frenzyStartTime = startTime;
-}
-
-void NeopixelCtrl :: updateFrenzy(unsigned long currentTime) {
-
-  if ((currentTime - _frenzyOldTime > 50) && (currentTime - _frenzyOldTime < _frenzyDuration)) {    // for stability
-    // arbitrary gap in milliseconds
-    // can be adjusted
-
-    for (int i = 0; i < _topSegmentLength; i++) {
-      _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(random(0, 255), random(0, 255), random(0, 255)));
-    }
-
-  }
-  else if (currentTime - _frenzyOldTime > _frenzyDuration) {
-    _isFrenzy = false;
-
-    for (int i = 0; i < _topSegmentLength; i++) {
-      _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(0, 0, 0));
-    }
-  }
-
-}
 
 bool NeopixelCtrl :: isCountingDown() {
   return _isCountingDown;
