@@ -18,7 +18,7 @@ class NeopixelCtrl {
   public:
     NeopixelCtrl(Adafruit_NeoPixel* pixelsPtr, int pixelPin, int totalLength);
 
-    void setTopSegment(int firstPixel, int segLength);
+    void setTopSegment(int firstPixel, int lastPixel);
     
     void setPlayerSegment(int playerCode, int firstPixel, int lastPixel);
     void setPlayerSegmentColour(int playerCode, char colour);
