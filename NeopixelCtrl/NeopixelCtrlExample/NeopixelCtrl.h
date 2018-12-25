@@ -45,7 +45,7 @@ class NeopixelCtrl {
     void updateSpeed(void);
     void updateFrenzy(unsigned long currentTime);
 
-    int _pixelPin;
+    int _pixelsPin;
     int _totalLength;
 
     int _topSegmentFirstIndex;

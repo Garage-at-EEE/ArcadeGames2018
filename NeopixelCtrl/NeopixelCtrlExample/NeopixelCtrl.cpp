@@ -1,17 +1,16 @@
 /*
   NeopixelCtrl.cpp - Library for Neopixel control in BishiBashi Game.
   Created by Karn Watcharasupat.
-  Last Updated 07 Dec 2018.
+  Last Updated December 2018.
   Garage@EEE, School of Electrical and Electronic Engineering, Nanyang Technological University, Singapore.
 */
 
 #include "NeopixelCtrl.h"
 
-NeopixelCtrl :: NeopixelCtrl (Adafruit_NeoPixel* pixelsPtr, int totalLength, int pixelPin) {
-
+NeopixelCtrl :: NeopixelCtrl (Adafruit_NeoPixel* pixelsPtr, int totalLength, int pixelsPin) {
   _pixelsPtr = pixelsPtr;
   _totalLength = totalLength;
-  _pixelPin = pixelPin;
+  _pixelsPin = pixelsPin;
 
   _isCountingDown = false;
   _isCountingUp = false;
@@ -85,7 +84,7 @@ void NeopixelCtrl :: countDown(int playerCode1, int playerCode2, int duration, u
   _countdownPlayerRight = playerCode2;
 
   _countdownStartTime = startTime;
-  _countdownDuration = duration * 1000; // convert milliseconds to seconds
+  _countdownDuration = duration * 1000UL; // convert milliseconds to seconds, UL for typecasting to unsigned long
 }
 
 void NeopixelCtrl :: updateCountDown(unsigned long currentTime) {
@@ -121,7 +120,7 @@ void NeopixelCtrl :: countUp(int duration, unsigned long startTime) {
   _isCountingUp = true;
 
   _countupStartTime = startTime;
-  _countupDuration = duration;
+  _countupDuration = duration * 1000UL; // convert milliseconds to seconds, UL for typecasting to unsigned long
 }
 
 void NeopixelCtrl :: updateCountUp(unsigned long currentTime) {
@@ -149,14 +148,14 @@ void NeopixelCtrl :: frenzy(int duration, unsigned long startTime) {
   
   _isFrenzy = true;
 
-  _frenzyDuration = duration * 1000; // convert second to millisecond
+  _frenzyDuration = duration * 1000UL; // convert second to millisecond, UL for typecasting to unsigned long
   _frenzyStartTime = startTime;
   _frenzyOldTime = startTime;
 }
 
 void NeopixelCtrl :: updateFrenzy(unsigned long currentTime) {
 
-  if ((currentTime - _frenzyOldTime > 100) && (currentTime - _frenzyOldTime < _frenzyDuration)) {    // for stability
+  if ((currentTime - _frenzyOldTime > 100UL) && (currentTime - _frenzyOldTime < _frenzyDuration)) {    // for stability, UL for typecasting to unsigned long
     for (int i = 0; i < _topSegmentLength; i++) {
       _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(random(0, 255), random(0, 255), random(0, 255)));
     }
@@ -213,8 +212,6 @@ void NeopixelCtrl :: updatePixelsColors(unsigned long currentTime) {
 
   _pixelsPtr->show();
 }
-
-
 
 bool NeopixelCtrl :: isCountingDown() {
   return _isCountingDown;
