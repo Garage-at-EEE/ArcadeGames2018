@@ -22,7 +22,7 @@ void setup() {
   // set the left segment pixels to 20 thru 39
 
   pixelsCtrl.setPlayerSegment(1, 42, 51);
-  // set Player 1 segment pixels to 41 thru 60
+  // set Player 1 segment pixels to 42 thru 51
 
   pixelsCtrl.setPlayerSegment(2, 54, 63);
   // set Player 2 segment pixels to 54 thru 63

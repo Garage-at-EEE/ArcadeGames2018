@@ -155,12 +155,14 @@ void NeopixelCtrl :: frenzy(int duration, unsigned long startTime) {
 
 void NeopixelCtrl :: updateFrenzy(unsigned long currentTime) {
 
-  if ((currentTime - _frenzyOldTime > 100UL) && (currentTime - _frenzyOldTime < _frenzyDuration)) {    // for stability, UL for typecasting to unsigned long
+  if ((currentTime - _frenzyOldTime > 100UL) && (currentTime - _frenzyStartTime < _frenzyDuration)) {    // for stability, UL for typecasting to unsigned long
     for (int i = 0; i < _topSegmentLength; i++) {
       _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(random(0, 255), random(0, 255), random(0, 255)));
     }
   }
-  else if (currentTime - _frenzyOldTime > _frenzyDuration) {
+  else if (currentTime - _frenzyStartTime > _frenzyDuration) {  
+    //else if was used because if (currentTime - _frenzyOldTime < 100UL) then the function does nothing
+    
     _isFrenzy = false;
 
     for (int i = 0; i < _topSegmentLength; i++) {

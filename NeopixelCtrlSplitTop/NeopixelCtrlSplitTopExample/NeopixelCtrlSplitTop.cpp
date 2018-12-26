@@ -52,7 +52,7 @@ uint32_t NeopixelCtrlSplitTop :: getColour(char colour) {
     case 'M':
       return _pixelsPtr->Color(255, 0, 255);
     default:
-      return _pixelsPtr->Color(255, 255, 255);                      //return white if the colour input in undefined
+      return _pixelsPtr->Color(255, 255, 255);                      //return white if the colour input is undefined
   }
 }
 
@@ -79,7 +79,7 @@ void NeopixelCtrlSplitTop :: countDown(int playerCode1, int playerCode2, int dur
   _countdownPlayerRight = playerCode2;
 
   _countdownStartTime = startTime;
-  _countdownDuration = duration * 1000UL; // convert milliseconds to seconds, UL for typecasting to unsigned long
+  _countdownDuration = duration * 1000UL; // convert seconds to milliseconds, UL for typecasting to unsigned long
 }
 
 void NeopixelCtrlSplitTop :: updateCountDown(unsigned long currentTime) {
@@ -92,14 +92,14 @@ void NeopixelCtrlSplitTop :: updateCountDown(unsigned long currentTime) {
   }
 
   int numPixelLeft = map(timeElapsed, 0, _countdownDuration, _leftSegmentLength, 0);
-  int numPixelRight = map(timeElapsed, 0, _countdownDuration, _rightSegmentLength, 0);
+  int numPixelRight = map(timeElapsed, 0, _countdownDuration, _rightSegmentLength, 0);  // mapping from high to low (counting down)
 
   for (int i = 0; i < numPixelLeft; i++) {
-    _pixelsPtr->setPixelColor(_leftSegmentLastIndex - i, _playerColours[_countdownPlayerLeft - 1]);
+    _pixelsPtr->setPixelColor(_leftSegmentLastIndex - i, _playerColours[_countdownPlayerLeft - 1]);  // displaying from center to edge
   }
 
   for (int i = 0; i < numPixelRight; i++) {
-    _pixelsPtr->setPixelColor(_rightSegmentFirstIndex + i, _playerColours[_countdownPlayerRight - 1]);
+    _pixelsPtr->setPixelColor(_rightSegmentFirstIndex + i, _playerColours[_countdownPlayerRight - 1]); // displaying from center to edge
   }
 }
 
@@ -113,7 +113,7 @@ void NeopixelCtrlSplitTop :: countUp(int duration, unsigned long startTime) {
   _isCountingUp = true;
 
   _countupStartTime = startTime;
-  _countupDuration = duration * 1000UL; // convert milliseconds to seconds, UL for typecasting to unsigned long
+  _countupDuration = duration * 1000UL; // convert seconds to milliseconds, UL for typecasting to unsigned long
 }
 
 void NeopixelCtrlSplitTop :: updateCountUp(unsigned long currentTime) {
@@ -153,7 +153,7 @@ void NeopixelCtrlSplitTop :: frenzy(int duration, unsigned long startTime) {
 
 void NeopixelCtrlSplitTop :: updateFrenzy(unsigned long currentTime) {
 
-  if ((currentTime - _frenzyOldTime > 100UL) && (currentTime - _frenzyOldTime < _frenzyDuration)) {    // for stability, UL for typecasting to unsigned long
+  if ((currentTime - _frenzyOldTime > 100UL) && (currentTime - _frenzyStartTime < _frenzyDuration)) {    // for stability, UL for typecasting to unsigned long
     for (int i = 0; i < _leftSegmentLength; i++) {
       _pixelsPtr->setPixelColor(_leftSegmentFirstIndex + i, _pixelsPtr->Color(random(0, 255), random(0, 255), random(0, 255)));
     }
@@ -161,7 +161,10 @@ void NeopixelCtrlSplitTop :: updateFrenzy(unsigned long currentTime) {
       _pixelsPtr->setPixelColor(_rightSegmentFirstIndex + i, _pixelsPtr->Color(random(0, 255), random(0, 255), random(0, 255)));
     }
   }
-  else if (currentTime - _frenzyOldTime > _frenzyDuration) {
+  else if (currentTime - _frenzyStartTime > _frenzyDuration) {
+
+    //else if was used because if (currentTime - _frenzyOldTime < 100UL) then the function does nothing
+    
     _isFrenzy = false;
 
     for (int i = 0; i < _leftSegmentLength; i++) {
