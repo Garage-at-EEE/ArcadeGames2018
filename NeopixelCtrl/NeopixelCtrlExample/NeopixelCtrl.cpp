@@ -150,7 +150,7 @@ void NeopixelCtrl :: frenzy(int duration, unsigned long startTime) {
     _isCountingDown = false;
     _isCountingUp = false;
   }
-  
+
   _isFrenzy = true;
 
   _frenzyDuration = duration * 1000UL; // convert second to millisecond, UL for typecasting to unsigned long
@@ -164,20 +164,17 @@ void NeopixelCtrl :: updateFrenzy(unsigned long currentTime) {
     for (int i = 0; i < _topSegmentLength; i++) {
       _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(random(0, 255), random(0, 255), random(0, 255)));
     }
-     _frenzyOldTime = currentTime;
+    _frenzyOldTime = currentTime;
   }
-  else if (currentTime - _frenzyStartTime > _frenzyDuration) {  
+  else if (currentTime - _frenzyStartTime > _frenzyDuration) {
     //else if was used because if (currentTime - _frenzyOldTime < 100UL) then the function does nothing
-    
+
     _isFrenzy = false;
 
     for (int i = 0; i < _topSegmentLength; i++) {
       _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(0, 0, 0));
     }
   }
-
- 
-
 }
 
 void NeopixelCtrl :: displaySpeed(int playerCode, int buttonSpeed) {
@@ -187,25 +184,17 @@ void NeopixelCtrl :: displaySpeed(int playerCode, int buttonSpeed) {
 }
 
 void NeopixelCtrl :: updateSpeed() {
-  for (int i = 0; i < _numPlayers; i++) {
+  for (int i = 0; i < _numPlayer; i++) {
     int thisPlayerSpeed = _playerSpeed[i];
-    
     int thisPlayerFirstIndex = _playerPixelIndices[i][0];
     int thisPlayerPixelLength = _playerPixelLengths[i];
     uint32_t thisPlayerColour = _playerColours[i];
 
     int numPixel = map(thisPlayerSpeed, 0, MAXSPEED, 0, thisPlayerPixelLength);
-    Serial.print("numPixel =");
-    Serial.println(numPixel);
-    
+
     for (int j = 0; j < numPixel; j++) {
       _pixelsPtr->setPixelColor(thisPlayerFirstIndex + j, thisPlayerColour);
-    
-    Serial.print("j = ");
-    Serial.println(j);
     }
-
-    Serial.println("Setting player speed pixels");
   }
 }
 
@@ -214,9 +203,9 @@ void NeopixelCtrl :: updatePixelsColors(unsigned long currentTime) {
   for (int i = 0; i < _totalLength; i++) {
     _pixelsPtr->setPixelColor(i, _pixelsPtr->Color(0, 0, 0));   // "turn off" all neopixels
   }
-  
-  updateSpeed();
-  
+
+  updateSpeed();    // always activated so that players can check if the button is working
+
   if (_isCountingDown) {
     updateCountDown(currentTime);
   }
@@ -226,8 +215,6 @@ void NeopixelCtrl :: updatePixelsColors(unsigned long currentTime) {
   else if (_isFrenzy) {
     updateFrenzy(currentTime);
   }
-
-    // always activated so that players can check if the button is working
 
   _pixelsPtr->show();
 }
@@ -244,6 +231,6 @@ bool NeopixelCtrl :: isFrenzy() {
   return _isFrenzy;
 }
 
-void NeopixelCtrl::setNumPlayer(int numPlayer){
-  _numPlayers = numPlayer;
-  }
+void NeopixelCtrl::setNumPlayer(int numPlayer) {
+  _numPlayer = numPlayer;
+}

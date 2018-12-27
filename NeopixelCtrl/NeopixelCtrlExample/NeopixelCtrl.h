@@ -56,7 +56,7 @@ class NeopixelCtrl {
     int _leftSegmentLength;
     int _rightSegmentLength;
 
-    int _numPlayers;
+    int _numPlayer;
 
     int _playerCodes[MAXPLAYERS];
     uint32_t _playerColours[MAXPLAYERS];

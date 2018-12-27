@@ -17,19 +17,20 @@ void setup() {
   randomSeed(analogRead(A0));                                                 // for frenzy random colour
 
   pixelsCtrl.setNumPlayer(4);
-  pixelsCtrl.setTopSegment(0, 0);
+
+  pixelsCtrl.setTopSegment(0, 39);
   // set the top segment pixels to 0 thru 39
 
-  pixelsCtrl.setPlayerSegment(1, 1, 5);
+  pixelsCtrl.setPlayerSegment(1, 41, 60);
   // set Player 1 segment pixels to 41 thru 60
 
-  pixelsCtrl.setPlayerSegment(2, 6, 10);
+  pixelsCtrl.setPlayerSegment(2, 54, 63);
   // set Player 2 segment pixels to 54 thru 63
 
-  pixelsCtrl.setPlayerSegment(3, 11, 15);
+  pixelsCtrl.setPlayerSegment(3, 66, 75);
   // set Player 3 segment pixels to 66 thru 75
 
-  pixelsCtrl.setPlayerSegment(4, 16, 20);
+  pixelsCtrl.setPlayerSegment(4, 78, 87);
   // set Player 4 segment pixels to 78 thru 87
 
   pixelsCtrl.setPlayerSegmentColour(1, 'R');
@@ -53,7 +54,7 @@ void loop() {
   // and countdown from both sides for 10 seconds
 
   currentTime = millis();
-  
+
   //  pixelsCtrl.countDown(leftPlayer, rightPlayer, duration_in_seconds, startTime);
   pixelsCtrl.countDown(1, 2, 10, currentTime);    // Player 1 on the left half, Player 2 on the right half
 
@@ -77,14 +78,17 @@ void loop() {
   pixelsCtrl.countUp(10, currentTime);
 
   while (pixelsCtrl.isCountingUp()) {
-    displayAllSpeed();
     updatePixels(); // the millis function is already included
   }
 
 }
 
-void displayAllSpeed() {
-  int speed1 = 12;
+void displayAllSpeeds() {
+
+  // change out random() to playerXXX.getSpeed() when ready
+  // the randoms are for testing purpose
+
+  int speed1 = random(50, 100);
   int speed2 = random(50, 100);
   int speed3 = random(50, 100);
   int speed4 = random(50, 100);
@@ -94,11 +98,6 @@ void displayAllSpeed() {
   pixelsCtrl.displaySpeed(3, speed3);
   pixelsCtrl.displaySpeed(4, speed4);
 
-  // display speed calls are placed here so that the speed strip can change independently of the top strip control
-
-  // change out random() to playerXXX.getSpeed() when ready
-  // the randoms are for testing purpose
-
   // pixelsCtrl.displaySpeed(1, playerOne.getSpeed());
   // pixelsCtrl.displaySpeed(2, playerTwo.getSpeed());
   // pixelsCtrl.displaySpeed(3, playerThree.getSpeed());
@@ -107,7 +106,7 @@ void displayAllSpeed() {
 
 void updatePixels() {
   currentTime = millis();
+  displayAllSpeeds();
   pixelsCtrl.updatePixelsColors(currentTime);
   pixels.show();
-  Serial.println("Updating speed");
 }
