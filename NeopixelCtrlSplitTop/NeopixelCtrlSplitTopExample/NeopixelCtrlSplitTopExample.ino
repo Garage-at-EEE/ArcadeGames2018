@@ -10,19 +10,22 @@ NeopixelCtrlSplitTop pixelsCtrl = NeopixelCtrlSplitTop(&pixels, NUMPIXELS, NEOPI
 unsigned long currentTime;
 
 void setup() {
+  Serial.begin(9600);
   pixels.begin();
   pixels.show();
 
   randomSeed(analogRead(A0));                                                 // for frenzy random colour
 
+  pixelsCtrl.setNumPlayer(4);
+  
   pixelsCtrl.setLeftSegment(0, 19);
   // set the left segment pixels to 0 thru 19
 
   pixelsCtrl.setRightSegment(20, 39);
   // set the left segment pixels to 20 thru 39
 
-  pixelsCtrl.setPlayerSegment(1, 42, 51);
-  // set Player 1 segment pixels to 42 thru 51
+  pixelsCtrl.setPlayerSegment(1, 41, 60);
+  // set Player 1 segment pixels to 41 thru 60
 
   pixelsCtrl.setPlayerSegment(2, 54, 63);
   // set Player 2 segment pixels to 54 thru 63
@@ -54,7 +57,7 @@ void loop() {
   // and countdown from both sides for 10 seconds
 
   currentTime = millis();
-  
+
   //  pixelsCtrl.countDown(leftPlayer, rightPlayer, duration_in_seconds, startTime);
   pixelsCtrl.countDown(1, 2, 10, currentTime);    // Player 1 on the left half, Player 2 on the right half
 
@@ -80,26 +83,33 @@ void loop() {
   while (pixelsCtrl.isCountingUp()) {
     updatePixels(); // the millis function is already included
   }
+
 }
 
-void updatePixels() {
-
-  // display speed calls are placed here so that the speed strip can change independently of the top strip control
+void displayAllSpeeds() {
 
   // change out random() to playerXXX.getSpeed() when ready
   // the randoms are for testing purpose
 
-  pixelsCtrl.displaySpeed(1, random(0, 100));
-  pixelsCtrl.displaySpeed(2, random(0, 100));
-  pixelsCtrl.displaySpeed(3, random(0, 100));
-  pixelsCtrl.displaySpeed(4, random(0, 100));
+  int speed1 = random(50, 100);
+  int speed2 = random(50, 100);
+  int speed3 = random(50, 100);
+  int speed4 = random(50, 100);
+
+  pixelsCtrl.displaySpeed(1, speed1);
+  pixelsCtrl.displaySpeed(2, speed2);
+  pixelsCtrl.displaySpeed(3, speed3);
+  pixelsCtrl.displaySpeed(4, speed4);
 
   // pixelsCtrl.displaySpeed(1, playerOne.getSpeed());
   // pixelsCtrl.displaySpeed(2, playerTwo.getSpeed());
   // pixelsCtrl.displaySpeed(3, playerThree.getSpeed());
   // pixelsCtrl.displaySpeed(4, playerFour.getSpeed());
+}
 
+void updatePixels() {
   currentTime = millis();
+  displayAllSpeeds();
   pixelsCtrl.updatePixelsColors(currentTime);
   pixels.show();
 }

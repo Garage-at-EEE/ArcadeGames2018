@@ -20,7 +20,7 @@ class NeopixelCtrlSplitTop {
 
     void setLeftSegment(int firstPixel, int lastPixel);
     void setRightSegment(int firstPixel, int lastPixel);
-    
+
     void setPlayerSegment(int playerCode, int firstPixel, int lastPixel);
     void setPlayerSegmentColour(int playerCode, char colour);
 
@@ -28,7 +28,7 @@ class NeopixelCtrlSplitTop {
 
     void countDown(int playerCode1, int playerCode2, int duration, unsigned long startTime);
     void countUp(int duration, unsigned long startTime);
-    
+
     void frenzy(int duration, unsigned long startTime);
 
     void displaySpeed(int playerCode, int buttonSpeed);
@@ -36,6 +36,8 @@ class NeopixelCtrlSplitTop {
     bool isCountingDown();
     bool isCountingUp();
     bool isFrenzy();
+
+    void setNumPlayer(int numPlayer);
 
   private:
 
@@ -56,7 +58,7 @@ class NeopixelCtrlSplitTop {
     int _rightSegmentLastIndex;
     int _rightSegmentLength;
 
-    int _numPlayers;
+    int _numPlayer;
 
     int _playerCodes[MAXPLAYERS];
     uint32_t _playerColours[MAXPLAYERS];
