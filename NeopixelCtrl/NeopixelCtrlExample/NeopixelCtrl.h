@@ -31,6 +31,7 @@ class NeopixelCtrl {
     void frenzy(int duration, unsigned long startTime);
 
     void displaySpeed(int playerCode, int buttonSpeed);
+    void setNumPlayer(int numPlayer);
 
     bool isCountingDown();
     bool isCountingUp();

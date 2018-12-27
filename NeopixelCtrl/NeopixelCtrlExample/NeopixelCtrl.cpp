@@ -38,11 +38,15 @@ void NeopixelCtrl :: setTopSegment(int firstPixel, int lastPixel) {
 
 void NeopixelCtrl :: setPlayerSegment(int playerCode, int firstPixel, int lastPixel) {
   _playerPixelIndices[playerCode - 1][0] = firstPixel;
+  Serial.println("Set first  pixel");
   _playerPixelIndices[playerCode - 1][1] = lastPixel;
+  Serial.println("Set last pixel");
   _playerPixelLengths[playerCode - 1] = lastPixel - firstPixel + 1;
+  Serial.println("Set length");
 }
 
 uint32_t NeopixelCtrl :: getColour(char colour) {
+  Serial.println("Getting colour");
   switch (colour) {
     case 'R':
       return _pixelsPtr->Color(255, 0, 0);
@@ -62,6 +66,7 @@ uint32_t NeopixelCtrl :: getColour(char colour) {
 }
 
 void NeopixelCtrl :: setPlayerSegmentColour(int playerCode, char colour) {
+  Serial.println("Setting Colour");
   _playerColours[playerCode - 1] = getColour(colour);
 }
 
@@ -159,6 +164,7 @@ void NeopixelCtrl :: updateFrenzy(unsigned long currentTime) {
     for (int i = 0; i < _topSegmentLength; i++) {
       _pixelsPtr->setPixelColor(_topSegmentFirstIndex + i, _pixelsPtr->Color(random(0, 255), random(0, 255), random(0, 255)));
     }
+     _frenzyOldTime = currentTime;
   }
   else if (currentTime - _frenzyStartTime > _frenzyDuration) {  
     //else if was used because if (currentTime - _frenzyOldTime < 100UL) then the function does nothing
@@ -170,27 +176,36 @@ void NeopixelCtrl :: updateFrenzy(unsigned long currentTime) {
     }
   }
 
-  _frenzyOldTime = currentTime;
+ 
 
 }
 
 void NeopixelCtrl :: displaySpeed(int playerCode, int buttonSpeed) {
   buttonSpeed = constrain(buttonSpeed, 0, MAXSPEED);
   _playerSpeed[playerCode - 1] = buttonSpeed;
+  Serial.println("Adding speed into array");
 }
 
 void NeopixelCtrl :: updateSpeed() {
   for (int i = 0; i < _numPlayers; i++) {
     int thisPlayerSpeed = _playerSpeed[i];
-
+    
     int thisPlayerFirstIndex = _playerPixelIndices[i][0];
     int thisPlayerPixelLength = _playerPixelLengths[i];
+    uint32_t thisPlayerColour = _playerColours[i];
 
     int numPixel = map(thisPlayerSpeed, 0, MAXSPEED, 0, thisPlayerPixelLength);
-
+    Serial.print("numPixel =");
+    Serial.println(numPixel);
+    
     for (int j = 0; j < numPixel; j++) {
-      _pixelsPtr->setPixelColor(thisPlayerFirstIndex + j, _playerColours[i]);
+      _pixelsPtr->setPixelColor(thisPlayerFirstIndex + j, thisPlayerColour);
+    
+    Serial.print("j = ");
+    Serial.println(j);
     }
+
+    Serial.println("Setting player speed pixels");
   }
 }
 
@@ -199,7 +214,9 @@ void NeopixelCtrl :: updatePixelsColors(unsigned long currentTime) {
   for (int i = 0; i < _totalLength; i++) {
     _pixelsPtr->setPixelColor(i, _pixelsPtr->Color(0, 0, 0));   // "turn off" all neopixels
   }
-
+  
+  updateSpeed();
+  
   if (_isCountingDown) {
     updateCountDown(currentTime);
   }
@@ -210,7 +227,7 @@ void NeopixelCtrl :: updatePixelsColors(unsigned long currentTime) {
     updateFrenzy(currentTime);
   }
 
-  updateSpeed();  // always activated so that players can check if the button is working
+    // always activated so that players can check if the button is working
 
   _pixelsPtr->show();
 }
@@ -226,3 +243,7 @@ bool NeopixelCtrl :: isCountingUp() {
 bool NeopixelCtrl :: isFrenzy() {
   return _isFrenzy;
 }
+
+void NeopixelCtrl::setNumPlayer(int numPlayer){
+  _numPlayers = numPlayer;
+  }
