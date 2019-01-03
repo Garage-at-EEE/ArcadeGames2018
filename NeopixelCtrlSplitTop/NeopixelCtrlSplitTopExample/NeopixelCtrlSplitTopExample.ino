@@ -75,7 +75,7 @@ void setup() {
 void loop() {
 
   // This should show the left side as red (P1 colour), right side as green (P2 colour)
-  // and countdown from both sides for 10 seconds
+  // and countdown from both sides for COUNTDOWN_DURATION seconds
 
   currentTime = millis();
 
@@ -87,7 +87,7 @@ void loop() {
     updatePixels(); // the millis function is already included
   }
 
-  // Showing random colours for 10 seconds
+  // Showing random colours for FRENZY_DURATION seconds
 
   currentTime = millis();
   pixelsCtrl.frenzy(FRENZY_DURATION, currentTime);
@@ -96,7 +96,7 @@ void loop() {
     updatePixels(); // the millis function is already included
   }
 
-  // Counting up for 10 seconds using the entire top segment
+  // Counting up for COUNTUP_DURATION seconds using the entire top segment
 
   currentTime = millis();
   pixelsCtrl.countUp(COUNTUP_DURATION, currentTime);
