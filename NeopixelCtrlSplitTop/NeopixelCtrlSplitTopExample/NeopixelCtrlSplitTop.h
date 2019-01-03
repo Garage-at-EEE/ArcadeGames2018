@@ -5,6 +5,18 @@
   Garage@EEE, School of Electrical and Electronic Engineering, Nanyang Technological University, Singapore.
 */
 
+#ifndef NEOPIXEL_DEBUG
+#define NEOPIXEL_DEBUG false
+#endif
+
+#ifndef UPDATE_DELAY
+#define UPDATE_DELAY 100UL
+#endif
+
+#ifndef RGB_MAX
+#define RGB_MAX 100  // If only Arduino Power is being used, do not go beyond 40
+#endif
+
 #define MAXPLAYERS 4
 #define MAXSPEED 100
 
@@ -13,6 +25,8 @@
 
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
+
+
 
 class NeopixelCtrlSplitTop {
   public:
@@ -83,6 +97,8 @@ class NeopixelCtrlSplitTop {
     bool _isCountingUp;
 
     Adafruit_NeoPixel* _pixelsPtr;
+
+    unsigned long _lastUpdateTime;
 };
 
 #endif

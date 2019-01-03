@@ -5,8 +5,6 @@
   Garage@EEE, School of Electrical and Electronic Engineering, Nanyang Technological University, Singapore.
 */
 
-#define NEOPIXEL_DEBUG true
-
 #include "NeopixelCtrlSplitTop.h"
 
 NeopixelCtrlSplitTop :: NeopixelCtrlSplitTop (Adafruit_NeoPixel* pixelsPtr, int totalLength, int pixelsPin) {
@@ -74,17 +72,17 @@ uint32_t NeopixelCtrlSplitTop :: getColour(char colour) {
 #endif
   switch (colour) {
     case 'R':
-      return _pixelsPtr->Color(255, 0, 0);
+      return _pixelsPtr->Color(RGB_MAX, 0, 0);
     case 'G':
-      return _pixelsPtr->Color(0, 255, 0);
+      return _pixelsPtr->Color(0, RGB_MAX, 0);
     case 'B':
-      return _pixelsPtr->Color(0, 0, 255);
+      return _pixelsPtr->Color(0, 0, RGB_MAX);
     case 'Y':
-      return _pixelsPtr->Color(255, 255, 0);
+      return _pixelsPtr->Color(RGB_MAX, RGB_MAX, 0);
     case 'C':
-      return _pixelsPtr->Color(0, 255, 255);
+      return _pixelsPtr->Color(0, RGB_MAX, RGB_MAX);
     case 'M':
-      return _pixelsPtr->Color(255, 0, 255);
+      return _pixelsPtr->Color(RGB_MAX, 0, RGB_MAX);
     default:
       return _pixelsPtr->Color(255, 255, 255);                      //return white if the colour input is undefined
   }
@@ -304,15 +302,15 @@ void NeopixelCtrlSplitTop :: updateFrenzy(unsigned long currentTime) {
   Serial.println("updateFrenzy() is called.");
 #endif
 
-  if ((currentTime - _frenzyOldTime > 100UL) && (currentTime - _frenzyStartTime < _frenzyDuration)) {    // for stability, UL for typecasting to unsigned long
+  if (currentTime - _frenzyStartTime < _frenzyDuration) {    // for stability, UL for typecasting to unsigned long
     for (int i = 0; i < _leftSegmentLength; i++) {
-      _pixelsPtr->setPixelColor(_leftSegmentFirstIndex + i, _pixelsPtr->Color(random(0, 255), random(0, 255), random(0, 255)));
+      _pixelsPtr->setPixelColor(_leftSegmentFirstIndex + i, _pixelsPtr->Color(random(0, RGB_MAX), random(0, RGB_MAX), random(0, RGB_MAX)));
 #if NEOPIXEL_DEBUG
       Serial.print(i + 1); Serial.println("th pixel on the left is set.");
 #endif
     }
     for (int i = 0; i < _rightSegmentLength; i++) {
-      _pixelsPtr->setPixelColor(_rightSegmentFirstIndex + i, _pixelsPtr->Color(random(0, 255), random(0, 255), random(0, 255)));
+      _pixelsPtr->setPixelColor(_rightSegmentFirstIndex + i, _pixelsPtr->Color(random(0, RGB_MAX), random(0, RGB_MAX), random(0, RGB_MAX)));
 #if NEOPIXEL_DEBUG
       Serial.print(i + 1); Serial.println("th pixel on the right is set.");
 #endif
@@ -384,6 +382,11 @@ void NeopixelCtrlSplitTop :: updateSpeed() {
 
 void NeopixelCtrlSplitTop :: updatePixelsColors(unsigned long currentTime) {
 
+  if (currentTime - _lastUpdateTime < UPDATE_DELAY) {
+    return;
+  }
+  
+
 #if NEOPIXEL_DEBUG
   Serial.println("updatePixelsColors() is called.");
 #endif
@@ -421,6 +424,8 @@ void NeopixelCtrlSplitTop :: updatePixelsColors(unsigned long currentTime) {
 #if NEOPIXEL_DEBUG
   Serial.println("Showing pixels.");
 #endif
+
+  _lastUpdateTime = currentTime;
 }
 
 bool NeopixelCtrlSplitTop :: isCountingDown() {

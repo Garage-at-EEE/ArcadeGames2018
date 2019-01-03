@@ -1,8 +1,39 @@
 #include <Adafruit_NeoPixel.h>
+
+// --------------- PUT THESE BEFORE INCLUDING NeopixelCtrlSplitTop.h ------------- //
+
+#define UPDATE_DELAY 100UL  // Put UL after the number to convert it to unsigned long
+#define RGB_MAX 40 // If only Arduino Power is being used, do not go beyond 40
+#define NEOPIXEL_DEBUG false
+
+// ------------------------------------------------------------------------------ //
+
 #include "NeopixelCtrlSplitTop.h"
 
-#define NEOPIXEL_PIN 6
+#define NEOPIXEL_PIN 8
 #define NUMPIXELS 80
+
+#define LEFT_SEGMENT_FIRST_PIXEL 0
+#define LEFT_SEGMENT_LAST_PIXEL 9
+
+#define RIGHT_SEGMENT_FIRST_PIXEL 13
+#define RIGHT_SEGMENT_LAST_PIXEL 22
+
+#define PLAYER1_FIRST_PIXEL 26
+#define PLAYER1_LAST_PIXEL 35
+
+#define PLAYER2_FIRST_PIXEL 39
+#define PLAYER2_LAST_PIXEL 48
+
+#define PLAYER3_FIRST_PIXEL 52
+#define PLAYER3_LAST_PIXEL 61
+
+#define PLAYER4_FIRST_PIXEL 65
+#define PLAYER4_LAST_PIXEL 74
+
+#define COUNTDOWN_DURATION 10   // in seconds
+#define COUNTUP_DURATION 10     // in seconds
+#define FRENZY_DURATION 10   // in seconds
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXEL_PIN);        //need to create a pixel object FIRST
 NeopixelCtrlSplitTop pixelsCtrl = NeopixelCtrlSplitTop(&pixels, NUMPIXELS, NEOPIXEL_PIN);     //then pass the pointer to the NeopixelCtrl object
@@ -17,36 +48,26 @@ void setup() {
   randomSeed(analogRead(A0));                                                 // for frenzy random colour
 
   pixelsCtrl.setNumPlayer(4);
-  
-  pixelsCtrl.setLeftSegment(0, 19);
-  // set the left segment pixels to 0 thru 19
 
-  pixelsCtrl.setRightSegment(20, 39);
-  // set the left segment pixels to 20 thru 39
+  pixelsCtrl.setLeftSegment(LEFT_SEGMENT_FIRST_PIXEL, LEFT_SEGMENT_LAST_PIXEL);
+  pixelsCtrl.setRightSegment(RIGHT_SEGMENT_FIRST_PIXEL, RIGHT_SEGMENT_LAST_PIXEL);
 
-  pixelsCtrl.setPlayerSegment(1, 41, 60);
-  // set Player 1 segment pixels to 41 thru 60
-
-  pixelsCtrl.setPlayerSegment(2, 54, 63);
-  // set Player 2 segment pixels to 54 thru 63
-
-  pixelsCtrl.setPlayerSegment(3, 66, 75);
-  // set Player 3 segment pixels to 66 thru 75
-
-  pixelsCtrl.setPlayerSegment(4, 78, 87);
-  // set Player 4 segment pixels to 78 thru 87
+  pixelsCtrl.setPlayerSegment(1, PLAYER1_FIRST_PIXEL, PLAYER1_LAST_PIXEL);
+  pixelsCtrl.setPlayerSegment(2, PLAYER2_FIRST_PIXEL, PLAYER2_LAST_PIXEL);
+  pixelsCtrl.setPlayerSegment(3, PLAYER3_FIRST_PIXEL, PLAYER3_LAST_PIXEL);
+  pixelsCtrl.setPlayerSegment(4, PLAYER4_FIRST_PIXEL, PLAYER4_LAST_PIXEL);
 
   pixelsCtrl.setPlayerSegmentColour(1, 'R');
-  // set Player 1 segment pixel colour to red
+  // set Player 1 segment pixel colour to red 'R'
 
   pixelsCtrl.setPlayerSegmentColour(2, 'G');
-  // set Player 2 segment pixel colour to green
+  // set Player 2 segment pixel colour to green 'G'
 
   pixelsCtrl.setPlayerSegmentColour(3, 'B');
-  // set Player 3 segment pixel colour to blue
+  // set Player 3 segment pixel colour to blue 'B'
 
   pixelsCtrl.setPlayerSegmentColour(4, 'Y');
-  // set Player 4 segment pixel colour to yellow
+  // set Player 4 segment pixel colour to yellow 'Y'
 
   // (other colour options are cyan 'C' and magenta 'M')
 }
@@ -59,7 +80,7 @@ void loop() {
   currentTime = millis();
 
   //  pixelsCtrl.countDown(leftPlayer, rightPlayer, duration_in_seconds, startTime);
-  pixelsCtrl.countDown(1, 2, 10, currentTime);    // Player 1 on the left half, Player 2 on the right half
+  pixelsCtrl.countDown(1, 2, COUNTDOWN_DURATION, currentTime);    // Player 1 on the left half, Player 2 on the right half
 
 
   while (pixelsCtrl.isCountingDown()) {
@@ -69,7 +90,7 @@ void loop() {
   // Showing random colours for 10 seconds
 
   currentTime = millis();
-  pixelsCtrl.frenzy(10, currentTime);
+  pixelsCtrl.frenzy(FRENZY_DURATION, currentTime);
 
   while (pixelsCtrl.isFrenzy()) {
     updatePixels(); // the millis function is already included
@@ -78,7 +99,7 @@ void loop() {
   // Counting up for 10 seconds using the entire top segment
 
   currentTime = millis();
-  pixelsCtrl.countUp(10, currentTime);
+  pixelsCtrl.countUp(COUNTUP_DURATION, currentTime);
 
   while (pixelsCtrl.isCountingUp()) {
     updatePixels(); // the millis function is already included
@@ -91,10 +112,10 @@ void displayAllSpeeds() {
   // change out random() to playerXXX.getSpeed() when ready
   // the randoms are for testing purpose
 
-  int speed1 = random(50, 100);
-  int speed2 = random(50, 100);
-  int speed3 = random(50, 100);
-  int speed4 = random(50, 100);
+  int speed1 = random(0, 100);
+  int speed2 = random(0, 100);
+  int speed3 = random(0, 100);
+  int speed4 = random(0, 100);
 
   pixelsCtrl.displaySpeed(1, speed1);
   pixelsCtrl.displaySpeed(2, speed2);

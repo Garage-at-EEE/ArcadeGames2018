@@ -5,7 +5,7 @@
   Garage@EEE, School of Electrical and Electronic Engineering, Nanyang Technological University, Singapore.
 */
 
-#define NEOPIXEL_DEBUG true
+#define NEOPIXEL_DEBUG false
 
 #include "NeopixelCtrl.h"
 

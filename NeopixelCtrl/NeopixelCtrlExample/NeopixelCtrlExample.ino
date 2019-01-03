@@ -1,8 +1,8 @@
 #include <Adafruit_NeoPixel.h>
 #include "NeopixelCtrl.h"
 
-#define NEOPIXEL_PIN 11
-#define NUMPIXELS 20
+#define NEOPIXEL_PIN 8
+#define NUMPIXELS 40
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXEL_PIN);        //need to create a pixel object FIRST
 NeopixelCtrl pixelsCtrl = NeopixelCtrl(&pixels, NUMPIXELS, NEOPIXEL_PIN);     //then pass the pointer to the NeopixelCtrl object
@@ -18,19 +18,19 @@ void setup() {
 
   pixelsCtrl.setNumPlayer(4);
 
-  pixelsCtrl.setTopSegment(0, 39);
+  pixelsCtrl.setTopSegment(0, 19);
   // set the top segment pixels to 0 thru 39
 
-  pixelsCtrl.setPlayerSegment(1, 41, 60);
+  pixelsCtrl.setPlayerSegment(1, 20, 24);
   // set Player 1 segment pixels to 41 thru 60
 
-  pixelsCtrl.setPlayerSegment(2, 54, 63);
+  pixelsCtrl.setPlayerSegment(2, 25, 29);
   // set Player 2 segment pixels to 54 thru 63
 
-  pixelsCtrl.setPlayerSegment(3, 66, 75);
+  pixelsCtrl.setPlayerSegment(3, 30, 34);
   // set Player 3 segment pixels to 66 thru 75
 
-  pixelsCtrl.setPlayerSegment(4, 78, 87);
+  pixelsCtrl.setPlayerSegment(4, 35, 39);
   // set Player 4 segment pixels to 78 thru 87
 
   pixelsCtrl.setPlayerSegmentColour(1, 'R');
