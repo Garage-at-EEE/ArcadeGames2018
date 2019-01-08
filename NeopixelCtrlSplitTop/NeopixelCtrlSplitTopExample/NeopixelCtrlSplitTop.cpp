@@ -98,7 +98,7 @@ void NeopixelCtrlSplitTop :: setPlayerSegmentColour(int playerCode, char colour)
   _playerColours[playerCode - 1] = getColour(colour);
 }
 
-void NeopixelCtrlSplitTop :: countDown(int playerCode1, int playerCode2, int duration, unsigned long startTime) {
+void NeopixelCtrlSplitTop :: countDown(int playerCode1, int playerCode2, unsigned long duration, unsigned long startTime) {
 #if NEOPIXEL_DEBUG
   Serial.println("countDown() is called.");
 #endif
@@ -106,7 +106,9 @@ void NeopixelCtrlSplitTop :: countDown(int playerCode1, int playerCode2, int dur
     _isCountingUp = false;
     _isFrenzy = false;
   }                                       // for safety
-
+  if (_isCountingDown){
+    return;
+  }
   _isCountingDown = true;
 
   if (playerCode1 > playerCode2) {
@@ -124,7 +126,7 @@ void NeopixelCtrlSplitTop :: countDown(int playerCode1, int playerCode2, int dur
 #endif
 
   _countdownStartTime = startTime;
-  _countdownDuration = duration * 1000UL; // convert seconds to milliseconds, UL for typecasting to unsigned long
+  _countdownDuration = duration;
 
 #if NEOPIXEL_DEBUG
   Serial.print("Countdown start time is "); Serial.println(_countdownStartTime);
@@ -193,7 +195,7 @@ void NeopixelCtrlSplitTop :: updateCountDown(unsigned long currentTime) {
   }
 }
 
-void NeopixelCtrlSplitTop :: countUp(int duration, unsigned long startTime) {
+void NeopixelCtrlSplitTop :: countUp(unsigned long duration, unsigned long startTime) {
 
 #if NEOPIXEL_DEBUG
   Serial.println("countUp() is called.");
@@ -204,11 +206,14 @@ void NeopixelCtrlSplitTop :: countUp(int duration, unsigned long startTime) {
     _isCountingDown = false;
     _isFrenzy = false;
   }
+  if (_isCountingUp){
+    return;
+  }
 
   _isCountingUp = true;
 
   _countupStartTime = startTime;
-  _countupDuration = duration * 1000UL; // convert seconds to milliseconds, UL for typecasting to unsigned long
+  _countupDuration = duration;
 
 #if NEOPIXEL_DEBUG
   Serial.print("Countup start time is "); Serial.println(_countupStartTime);
@@ -239,8 +244,10 @@ void NeopixelCtrlSplitTop :: updateCountUp(unsigned long currentTime) {
     return;
   }
 
-  int numPixelLeft = map(timeElapsed, 0, _countdownDuration, 0, _leftSegmentLength);
-  int numPixelRight = map(timeElapsed, 0, _countdownDuration, 0, _rightSegmentLength);
+  int numPixelLeft = map(timeElapsed, 0, _countupDuration, 0, _leftSegmentLength);
+  int numPixelRight = map(timeElapsed, 0, _countupDuration, 0, _rightSegmentLength);
+  numPixelLeft = constrain(numPixelLeft, 0, _leftSegmentLength);
+  numPixelRight = constrain(numPixelRight, 0, _rightSegmentLength);
 
 #if NEOPIXEL_DEBUG
   Serial.print("Showing "); Serial.print(numPixelLeft);
@@ -277,7 +284,7 @@ void NeopixelCtrlSplitTop :: updateCountUp(unsigned long currentTime) {
 
 }
 
-void NeopixelCtrlSplitTop :: frenzy(int duration, unsigned long startTime) {
+void NeopixelCtrlSplitTop :: frenzy(unsigned long duration, unsigned long startTime) {
 
 #if NEOPIXEL_DEBUG
   Serial.println("frenzy() is called.");
@@ -287,10 +294,13 @@ void NeopixelCtrlSplitTop :: frenzy(int duration, unsigned long startTime) {
     _isCountingDown = false;
     _isCountingUp = false;
   }
+  if (_isFrenzy){
+    return;
+  }
 
   _isFrenzy = true;
 
-  _frenzyDuration = duration * 1000UL; // convert second to millisecond, UL for typecasting to unsigned long
+  _frenzyDuration = duration;
   _frenzyStartTime = startTime;
   _frenzyOldTime = startTime;
 }

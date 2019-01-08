@@ -40,10 +40,10 @@ class NeopixelCtrlSplitTop {
 
     void updatePixelsColors(unsigned long currentTime);
 
-    void countDown(int playerCode1, int playerCode2, int duration, unsigned long startTime);
-    void countUp(int duration, unsigned long startTime);
+    void countDown(int playerCode1, int playerCode2, long unsigned duration, unsigned long startTime);
+    void countUp(long unsigned duration, unsigned long startTime);
 
-    void frenzy(int duration, unsigned long startTime);
+    void frenzy(long unsigned duration, unsigned long startTime);
 
     void displaySpeed(int playerCode, int buttonSpeed);
 

@@ -1,16 +1,11 @@
 #include <Adafruit_NeoPixel.h>
-
-// --------------- PUT THESE BEFORE INCLUDING NeopixelCtrlSplitTop.h ------------- //
+#include "NeopixelCtrlSplitTop.h"
 
 #define UPDATE_DELAY 100UL  // Put UL after the number to convert it to unsigned long
 #define RGB_MAX 40 // If only Arduino Power is being used, do not go beyond 40
 #define NEOPIXEL_DEBUG false
 
-// ------------------------------------------------------------------------------ //
-
-#include "NeopixelCtrlSplitTop.h"
-
-#define NEOPIXEL_PIN 8
+#define NEOPIXEL_PIN 2
 #define NUMPIXELS 80
 
 #define LEFT_SEGMENT_FIRST_PIXEL 0
@@ -31,9 +26,9 @@
 #define PLAYER4_FIRST_PIXEL 65
 #define PLAYER4_LAST_PIXEL 74
 
-#define COUNTDOWN_DURATION 10   // in seconds
-#define COUNTUP_DURATION 10     // in seconds
-#define FRENZY_DURATION 10   // in seconds
+#define COUNTDOWN_DURATION 500
+#define COUNTUP_DURATION 7500  
+#define FRENZY_DURATION 500  
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEOPIXEL_PIN);        //need to create a pixel object FIRST
 NeopixelCtrlSplitTop pixelsCtrl = NeopixelCtrlSplitTop(&pixels, NUMPIXELS, NEOPIXEL_PIN);     //then pass the pointer to the NeopixelCtrl object
